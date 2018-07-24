@@ -11,7 +11,7 @@ auth=tweepy.OAuthHandler("LYuZ8TRRBuJ7IQcoyyZYwe0uy","eIwCZsZ4IOQqe8p3nI4ybAJHcS
 auth.set_access_token("928145131886317568-6bAb5L7Xj9OfiPYfgGTfMrYG6kCdZjC", "iRivk0tnYtPHaTLlwNipd6pECm7RcOHrNp0hPVvqx8AWb")
 api = tweepy.API(auth)
 
-f = open('credentials.txt')
+f = open('other/credentials.txt')
 credentials = json.load(f)
 f.close()
 conn = psycopg2.connect(dbname = credentials["dbname"],
