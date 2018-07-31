@@ -1,12 +1,6 @@
 import tweepy, json, re, pendulum, requests, psycopg2, collections, math
-from summa import keywords
-from readability import Document
 from tqdm import tqdm
 from newsplease import NewsPlease
-from operator import itemgetter
-from math import ceil
-from fuzzywuzzy import fuzz
-from gensim.summarization import summarize
 from keywordfinder import KeywordFinder
 
 accounts=["cnnbrk","AP_Politics","BBCBreaking","Reuters","BreakingNews","AP"]
@@ -117,7 +111,6 @@ def generateGraphs():
             covered |= set(kwd_to_urls[max_sub]) 
         count = collections.Counter(keywords_total)
         urls = cleanURLs(urls,kwd_final)
-        print(urls)
         
         #add nodes
         for word in kwd_final:

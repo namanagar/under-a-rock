@@ -4,3 +4,5 @@ other/
 dbscriptenv/
 .*
 !/.gitinore
+nltk_data/
+__pycache__/
