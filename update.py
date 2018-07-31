@@ -2,11 +2,14 @@ import tweepy, json, re, pendulum, requests, psycopg2, collections, math
 from summa import keywords
 from readability import Document
 from tqdm import tqdm
+from newsplease import NewsPlease
 from operator import itemgetter
 from math import ceil
+from fuzzywuzzy import fuzz
+from gensim.summarization import summarize
+from keywordfinder import KeywordFinder
 
 accounts=["cnnbrk","AP_Politics","BBCBreaking","Reuters","BreakingNews","AP"]
-flaggedPhrases=["follow live updates","follow updates","icymi","exclusive","breaking","reuters","said","news","file","report","state","states","reporting"]
 auth=tweepy.OAuthHandler("LYuZ8TRRBuJ7IQcoyyZYwe0uy","eIwCZsZ4IOQqe8p3nI4ybAJHcShILcpmwYkzLXW5xLSTplzDRl")
 auth.set_access_token("928145131886317568-6bAb5L7Xj9OfiPYfgGTfMrYG6kCdZjC", "iRivk0tnYtPHaTLlwNipd6pECm7RcOHrNp0hPVvqx8AWb")
 api = tweepy.API(auth)
@@ -32,25 +35,23 @@ def updateTweetsInDatabase():
     kwdDict = {}
     print('Extracting keywords...')
     for url,name,timestamp,tweet_text in tqdm(data):
-        response = requests.get(url)
-        doc = Document(response.text)
-        text = re.sub('<[^<]+?>','',doc.summary())
-        title = doc.short_title()
-        kwdandscores = keywords.keywords(text, split=True, scores=True)
-        kwdList = [x for x in kwdandscores if len(x[0])>=3 and x[0].lower() not in flaggedPhrases]
-        kwdInTweet = [kwd[0] for kwd in kwdList if kwd[0] in tweet_text]
-        cur.execute('''INSERT INTO public.tweets VALUES (%s,%s,%s,%s,%s,%s,%s)''', (url,name,timestamp,[a[0] for a in kwdList],kwdInTweet,title,[b[1] for b in kwdList]))
+        finder = KeywordFinder(url)
+        keyphrases = finder.getKeyphrases()
+        lede = finder.lede
+        title = finder.title 
+        cur.execute('''INSERT INTO public.articles VALUES (%s,%s,%s,%s,%s,%s)''', (url,keyphrases,title,name,lede,timestamp))
     print(f'Waiting to insert {len(data)} tweets into database')
     return
+
 
 def getData():
     now = pendulum.now('UTC')
     print(f'''---Starting script: {now.to_day_datetime_string()}---''')
-    cur.execute('''SELECT "timestamp" FROM public.tweets ORDER BY "timestamp" DESC LIMIT 1''')
+    cur.execute('''SELECT "timestamp" FROM public.articles ORDER BY "timestamp" DESC LIMIT 1''')
     start = pendulum.from_timestamp(cur.fetchone()[0],'UTC')
     print(f'Last tweet in database: {start.to_day_datetime_string()}')
     mintime = now.timestamp()-1209600.0
-    cur.execute('''DELETE FROM public.tweets WHERE timestamp<%s''', (mintime,))
+    cur.execute('''DELETE FROM public.articles WHERE timestamp<%s''', (mintime,))
     data=[]
     print(f'Fetching tweets from the last {start.diff().in_minutes()} minutes')
     for name in accounts:
@@ -89,37 +90,47 @@ def generateGraphs():
     for amount in seconds:
         nodes=[]
         edges=[]
-        cur.execute(f'''SELECT * FROM public.tweets WHERE timestamp>{pendulum.now('UTC').timestamp()-amount} AND keywordscores IS NOT NULL''')
+        cur.execute(f'''SELECT * FROM public.articles WHERE timestamp>{pendulum.now('UTC').timestamp()-amount} AND title IS NOT NULL''')
         print(f"Creating graph for last {amount/60} minutes")
         tweets = cur.fetchall()
         print(f'{len(tweets)} relevant tweets found')
         keywords_total = []
-        keywordscores_dict = {}
         urls = []
         kwd_to_urls = {}
-        for url,name,timestamp,keywords,keywordsintitle,title,keywordscores in tweets:
+        for url,keywords,title,name,lede,timestamp in tweets:
             urls.append({url:{'name':name,'title':title,'keywords':keywords}})
             keywords_total.extend(keywords)
             for c,keyword in enumerate(keywords):
                 if keyword not in kwd_to_urls.keys():
                     kwd_to_urls[keyword] = []
                 kwd_to_urls[keyword].append(url)
-                if keyword not in keywordscores_dict.keys():
-                    keywordscores_dict[keyword] = []
-                keywordscores_dict[keyword].append(keywordscores[c])
-        kwd_final = sorted([(word, 2/(1+math.exp(-1*sum(keywordscores_dict[word])/math.sqrt(amount/3600)))-1) for word,score in collections.Counter(keywords_total).most_common(20)],key=itemgetter(1),reverse=True)[:10]
+    
+        covered = set()
+        kwd_final = []
+        for key, item in list(kwd_to_urls.items()):
+            if len(item)<=1:
+                del kwd_to_urls[key]
+        elements = set([item for l in kwd_to_urls.values() for item in l])
+        while covered!=elements:
+            max_sub = max(kwd_to_urls, key = lambda x: len(set(kwd_to_urls[x])-covered))
+            kwd_final.append(max_sub)
+            covered |= set(kwd_to_urls[max_sub]) 
+        count = collections.Counter(keywords_total)
         urls = cleanURLs(urls,kwd_final)
+        print(urls)
         
         #add nodes
-        for word,score in kwd_final:
-            nodes.append({'label':word,'id':word,'size':ceil(10*score)})
+        for word in kwd_final:
+            nodes.append({'label':word,'id':word,'size':count[word]})
 
         #add edges
         for i in range(len(kwd_final)-1):
             for j in range(i+1,len(kwd_final)):
-                if kwd_final[i][0]!=kwd_final[j][0]:
-                    if 2*len(set(kwd_to_urls[kwd_final[i][0]]) & set(kwd_to_urls[kwd_final[j][0]]))/(len(set(kwd_to_urls[kwd_final[i][0]]))+len(set(kwd_to_urls[kwd_final[j][0]])))>0.3:
-                        edges.append({'id':kwd_final[i][0]+kwd_final[j][0],'source':kwd_final[i][0],'target':kwd_final[j][0]})
+                w1 = kwd_final[i]
+                w2 = kwd_final[j]
+                if w1!=w2:
+                    if 2*len(set(kwd_to_urls[w1]) & set(kwd_to_urls[w2]))/(len(set(kwd_to_urls[w1]))+len(set(kwd_to_urls[w2])))>0.2:
+                        edges.append({'id':w1+w2,'source':w1,'target':w2})
         
         cur.execute('''INSERT INTO public.graphs VALUES (%s,%s)''',(amount,json.dumps({'nodes':nodes,'edges':edges,'articles':urls})))
     print(f'Inserted {len(seconds)} graphs')
@@ -127,7 +138,7 @@ def generateGraphs():
 def cleanURLs(urls, kwd_final):
     filtered_urls = []
     for url in urls:
-        filtered_kwds = [j for j,k in kwd_final if j in list(url.items())[0][1]['keywords']]
+        filtered_kwds = [j for j in kwd_final if j in list(url.items())[0][1]['keywords']]
         if len(filtered_kwds)==0:
             continue
         url[list(url.keys())[0]]['keywords'] = filtered_kwds
