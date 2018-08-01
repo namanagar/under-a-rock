@@ -22,29 +22,68 @@
         </div>
       </div>
     </div>
+    <div class="row-fluid">
+      <div class="col-sm-12 col-md-12">
+        <d3-network :net-nodes="scaledNodes" :net-links="links" :options="graphOptions"></d3-network>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 const axios = require('axios');
+import D3Network from 'vue-d3-network';
 export default {
   name: 'app',
   data () {
     return {
       options: [3,6,12,24,48],
       selected: '',
-      info: ''
+      nodes: [],
+      edges: [],
+      articles: [],
+      graphOptions: {
+        canvas: false,
+        force: 1500,
+        linkWidth: 2.5,
+        strLinks: true,
+        nodeLabels: true
+      }
+    }
+  },
+  computed: {
+    links: function (){
+      var links = []
+      this.edges.forEach(el => {
+        links.push({ id: el.id, sid: el.source, tid: el.target, name: el.id, _color: "#2c3e50" })
+      })
+      return links
+    },
+    scaledNodes: function(){
+      var myNodes = []
+      this.nodes.forEach(el => {
+        myNodes.push({ id: el.id, name: el.label, _size: el.size*3.5 })
+      })
+      return myNodes
     }
   },
   methods: {
     getOptionString(option){
-      return (option < 24) ? option + " hours" : (option/24 > 1) ? option/24 + " days" : option/24 + " day";
+      return (option < 24) ? option + " hours" : (option/24 > 1) ? option/24 + " days" : option/24 + " day"
     },
     getGraphs(option){
       axios
       .get('http://167.99.154.215/graphs/' + option)
-      .then(response => (this.info = response))
+      .then(response => {
+        console.log(response.data)
+        this.nodes = response.data.nodes
+        this.edges = response.data.edges
+        this.articles = response.data.articles
+      })
     }
+  },
+  components: {
+    D3Network
   }
 }
 </script>
@@ -78,5 +117,15 @@ p, a, span {
 }
 [type='radio'] {
 display: none; 
+}
+.node-label{
+  font-family: 'Lato', sans-serif;
+  font-size: .75em;
+  fill: #2c3e50;
+}
+.node{
+  fill: #4CB191;
+  stroke: #2c3e50;
+  stroke-width: 3px;
 }
 </style>
