@@ -46,7 +46,7 @@ export default {
       selectedNodes: [],
       graphOptions: {
         canvas: false,
-        force: 2000,
+        force: 4000,
         linkWidth: 3,
         strLinks: true,
         nodeLabels: true
@@ -69,10 +69,20 @@ export default {
       return myNodes
     },
     selection: function(){
-      var obj = {}
+      var obj = { }
+      obj.nodes =  {}
+      obj.links = {}
       this.selectedNodes.forEach(el => {
-        // TODO: figure out how to create selection object correctly
+        obj.nodes[el.id] = el
+        let node = el.id
+        let edges = this.links
+        edges.forEach(edge => {
+          if (edge.tid === node || edge.sid === node){
+            obj.links[edge.id] = edge
+          }
+        })
       })
+      return obj
     }
   },
   methods: {
@@ -80,6 +90,7 @@ export default {
       return (option < 24) ? option + " hours" : (option/24 > 1) ? option/24 + " days" : option/24 + " day"
     },
     getGraphs(option){
+      this.selectedNodes = []
       axios
       .get('http://167.99.154.215/graphs/' + option)
       .then(response => {
@@ -138,8 +149,8 @@ display: none;
   stroke: #2c3e50;
   stroke-width: 2px;
 }
-.node .selected{
-  stroke: #caa455;
+.selected{
+  stroke: #caa455 !important;
 }
 .link .selected{
   stroke: rgba(202,164,85,.6);
