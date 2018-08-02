@@ -24,11 +24,11 @@
     </div>
     <div class="row-fluid" v-if="this.selected != ''">
       <div class="col-sm-12 col-md-12">
-        <d3-network :net-nodes="scaledNodes" :net-links="links" :options="graphOptions" :selection="selection"
+        <d3-network class="network" :net-nodes="scaledNodes" :net-links="links" :options="graphOptions" :selection="selection"
                     @node-click="selectNode"></d3-network>
       </div>
     </div>
-    <div class="row-fluid padded" v-if="this.flattenedArticles.length > 0">
+    <div class="row-fluid padded" v-if="this.articles.length > 0">
       <div class="col-sm-12 col-md-12">
         <h4>filtered articles</h4>
       </div>
@@ -57,10 +57,11 @@ export default {
       selectedNodes: [],
       graphOptions: {
         canvas: false,
-        force: 3000,
-        linkWidth: 3,
+        force: 1000,
         strLinks: true,
-        nodeLabels: true
+        nodeLabels: true,
+        //delete linkwidth when issue resolved with stroke width attribute below
+        linkWidth: 3
       }
     };
   },
@@ -68,12 +69,14 @@ export default {
     links: function() {
       var links = [];
       this.edges.forEach(el => {
+        let score = el.score
         links.push({
           id: el.id,
           sid: el.source,
           tid: el.target,
           name: el.id,
-          _color: "rgba(44, 62, 80, 0.4)"
+          //stroke width not currently working
+          _svgAttrs: { "stroke-width" : el.score.toFixed(2) , 'stroke': "rgba(44, 62, 80, 0.4)"}
         });
       });
       return links;
@@ -81,7 +84,7 @@ export default {
     scaledNodes: function() {
       var myNodes = [];
       this.nodes.forEach(el => {
-        myNodes.push({ id: el.id, name: el.label, _size: el.size * 4 });
+        myNodes.push({ id: el.id, name: el.label, _size: this.getNodeSize(el.size) });
       });
       return myNodes;
     },
@@ -91,13 +94,12 @@ export default {
       obj.links = {};
       this.selectedNodes.forEach(el => {
         obj.nodes[el.id] = el;
-        let node = el.id;
-        let edges = this.links;
-        edges.forEach(edge => {
-          if (edge.tid === node || edge.sid === node) {
-            obj.links[edge.id] = edge;
-          }
-        });
+      });
+      let edges = this.links;
+      edges.forEach(edge => {
+        if (this.selectedNodes.length > 0 & (this.selectedNodes.map(val => val.id).includes(edge.sid) && this.selectedNodes.map(val => val.id).includes(edge.tid))) {
+          obj.links[edge.id] = edge;
+        }
       });
       return obj;
     },
@@ -108,22 +110,9 @@ export default {
       });
       return arr;
     },
-    flattenedArticles: function() {
-      let flat = [];
-      this.articles.forEach(el => {
-        let article = {};
-        let key = Object.keys(el)[0];
-        article.link = key;
-        article.name = el[key].name;
-        article.title = el[key].title;
-        article.keywords = el[key].keywords;
-        flat.push(article);
-      });
-      return flat;
-    },
     filteredArticles: function() {
       let filtered = [];
-      this.flattenedArticles.forEach(el => {
+      this.articles.forEach(el => {
         if (this.keywords.every(val => el.keywords.includes(val))) {
           filtered.push(el);
         }
@@ -132,6 +121,12 @@ export default {
     }
   },
   methods: {
+    getNodeSize(size){
+      let newSize = size * 3
+      if (newSize < 15) { return 15 }
+      else if (newSize > 60) {  if (this.selected > 12) { return 50 } else { return 60 } }
+      else return newSize
+    },
     getOptionString(option) {
       return option < 24
         ? option + " hours"
@@ -139,7 +134,7 @@ export default {
     },
     getGraphs(option) {
       this.selectedNodes = [];
-      axios.get("http://167.99.154.215/graphs/" + option).then(response => {
+      axios.get("https://underarock.tk/graphs/" + option).then(response => {
         this.nodes = response.data.nodes;
         this.edges = response.data.edges;
         this.articles = response.data.articles;
@@ -197,6 +192,9 @@ a {
   display: none;
 }
 
+.network{
+  min-height: 550px;
+}
 .node-label {
   font-family: "Lato", sans-serif;
   font-size: 0.85em;

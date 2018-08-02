@@ -4,10 +4,10 @@
       <div v-for="(article, index) in sublists[sublistIndex]" :key="index" class="col-sm-12 col-md-3">
         <div class="card" id="card">
           <div class="card-header">
-            {{ article.name }}
+            <h5>{{ article.name }} - {{ article.title }}</h5>
           </div>
-          <div class="card-body">
-            <h4 class="card-title">{{ article.title }}</h4>
+          <div class="card-body text-muted">
+            <div style="margin-bottom: 1em">{{ article.lede }}</div>
             <a @click="openLink(article)" class="btn btn-sm btn-outline-secondary">link</a>
           </div>
           <div class="card-footer text-muted">
@@ -70,7 +70,7 @@ a {
 
 @media screen and (min-width: 600px) {
     .sublist{
-      margin-bottom: 2em;
+      margin-bottom: 1.5em;
     }
     #card{
       text-align: center;
