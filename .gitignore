@@ -1,0 +1,20 @@
+*.txt
+!requirements.txt
+other/
+dbscriptenv/
+.*
+!/.gitinore
+nltk_data/
+__pycache__/
+
+.DS_Store
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Editor directories and files
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
