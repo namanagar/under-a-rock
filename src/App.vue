@@ -49,7 +49,7 @@ export default {
   name: "app",
   data() {
     return {
-      options: [3, 6, 12, 24, 48],
+      options: [],
       selected: "",
       nodes: [],
       edges: [],
@@ -64,6 +64,11 @@ export default {
         linkWidth: 3
       }
     };
+  },
+  mounted: function() {
+     axios.get("https://underarock.tk/graphs/options").then(response => {
+        this.options = response.data;
+      })
   },
   computed: {
     links: function() {

@@ -1,14 +1,14 @@
 <template>
   <div class="col-sm-12 col-md-12">
     <div v-for="(sublist, sublistIndex) in sublists" :key="sublistIndex" class="row sublist">
-      <div v-for="(article, index) in sublists[sublistIndex]" :key="index" class="col-sm-12 col-md-3">
+      <div v-for="(article, index) in sublists[sublistIndex]" :key="index" class="col-sm-12 col-md-4">
         <div class="card" id="card">
           <div class="card-header">
             <h5>{{ article.name }} - {{ article.title }}</h5>
           </div>
           <div class="card-body text-muted">
-            <div style="margin-bottom: 1em">{{ article.lede }}</div>
-            <a @click="openLink(article)" class="btn btn-sm btn-outline-secondary">link</a>
+            <div style="margin-bottom: 1em">{{ article.lede }}...</div>
+            <a @click="openLink(article)" class="btn btn-sm btn-outline-secondary">keep reading</a>
           </div>
           <div class="card-footer text-muted">
             {{ formatKeywords(article.keywords) }}
@@ -44,7 +44,7 @@ export default {
       var chunkCounter = 0;
       for (var i = 0; i < this.articles.length; i++) {
         chunk.push(this.articles[i]);
-        if (chunk.length == 4 | chunk.length == this.articles.length - chunkCounter*4) {
+        if (chunk.length == 3 | chunk.length == this.articles.length - chunkCounter*3) {
           sublists.push(chunk);
           chunk = [];
           chunkCounter += 1;
