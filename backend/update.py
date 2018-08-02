@@ -2,8 +2,13 @@ import tweepy, json, re, pendulum, requests, psycopg2, collections, math
 from tqdm import tqdm
 from newsplease import NewsPlease
 from keywordfinder import KeywordFinder
+from math import ceil
+#todo: things similar on wikipedia, scores for articles
+
 
 accounts=["cnnbrk","AP_Politics","BBCBreaking","Reuters","BreakingNews","AP"]
+account_names = {"cnnbrk":"CNN","AP_Politics":"AP","BBCBreaking":"BBC","Reuters":"Reuters","AP":"AP","BreakingNews":"NBC"}
+flaggedPhrases = ["reuters"]
 auth=tweepy.OAuthHandler("LYuZ8TRRBuJ7IQcoyyZYwe0uy","eIwCZsZ4IOQqe8p3nI4ybAJHcShILcpmwYkzLXW5xLSTplzDRl")
 auth.set_access_token("928145131886317568-6bAb5L7Xj9OfiPYfgGTfMrYG6kCdZjC", "iRivk0tnYtPHaTLlwNipd6pECm7RcOHrNp0hPVvqx8AWb")
 api = tweepy.API(auth)
@@ -30,7 +35,7 @@ def updateTweetsInDatabase():
     print('Extracting keywords...')
     for url,name,timestamp,tweet_text in tqdm(data):
         finder = KeywordFinder(url)
-        keyphrases = finder.getKeyphrases()
+        keyphrases = [keyphrase for keyphrase in finder.getKeyphrases() if keyphrase.lower() not in flaggedPhrases]
         lede = finder.lede
         title = finder.title 
         cur.execute('''INSERT INTO public.articles VALUES (%s,%s,%s,%s,%s,%s)''', (url,keyphrases,title,name,lede,timestamp))
@@ -92,7 +97,8 @@ def generateGraphs():
         urls = []
         kwd_to_urls = {}
         for url,keywords,title,name,lede,timestamp in tweets:
-            urls.append({url:{'name':name,'title':title,'keywords':keywords}})
+            if title not in [qwe['title'] for qwe in urls]:
+                urls.append({'url':url,'name':account_names[name],'title':title,'keywords':keywords,'lede':lede})
             keywords_total.extend(keywords)
             for c,keyword in enumerate(keywords):
                 if keyword not in kwd_to_urls.keys():
@@ -102,7 +108,8 @@ def generateGraphs():
         covered = set()
         kwd_final = []
         for key, item in list(kwd_to_urls.items()):
-            if len(item)<=1:
+            if len(item)<=ceil(amount/108000+0.9):
+            #if len(item)<=2:
                 del kwd_to_urls[key]
         elements = set([item for l in kwd_to_urls.values() for item in l])
         while covered!=elements:
@@ -110,6 +117,9 @@ def generateGraphs():
             kwd_final.append(max_sub)
             covered |= set(kwd_to_urls[max_sub]) 
         count = collections.Counter(keywords_total)
+        for w,s in count.most_common(20):
+            if w not in kwd_final and s>2:
+                kwd_final.append(w)
         urls = cleanURLs(urls,kwd_final)
         
         #add nodes
@@ -122,20 +132,21 @@ def generateGraphs():
                 w1 = kwd_final[i]
                 w2 = kwd_final[j]
                 if w1!=w2:
-                    if 2*len(set(kwd_to_urls[w1]) & set(kwd_to_urls[w2]))/(len(set(kwd_to_urls[w1]))+len(set(kwd_to_urls[w2])))>0.2:
-                        edges.append({'id':w1+w2,'source':w1,'target':w2})
+                    edge_score = 2*len(set(kwd_to_urls[w1]) & set(kwd_to_urls[w2]))/(len(set(kwd_to_urls[w1]))+len(set(kwd_to_urls[w2])))
+                    if edge_score>0.2:
+                        edges.append({'id':w1+w2,'source':w1,'target':w2,'score':10*edge_score})
         
         cur.execute('''INSERT INTO public.graphs VALUES (%s,%s)''',(amount,json.dumps({'nodes':nodes,'edges':edges,'articles':urls})))
     print(f'Inserted {len(seconds)} graphs')
 
 def cleanURLs(urls, kwd_final):
     filtered_urls = []
-    for url in urls:
-        filtered_kwds = [j for j in kwd_final if j in list(url.items())[0][1]['keywords']]
+    for d in urls:
+        filtered_kwds = [j for j in kwd_final if j in d['keywords']]
         if len(filtered_kwds)==0:
             continue
-        url[list(url.keys())[0]]['keywords'] = filtered_kwds
-        filtered_urls.append(url)
+        d['keywords'] = filtered_kwds
+        filtered_urls.append(d)
     return filtered_urls
 
 def main():

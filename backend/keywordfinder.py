@@ -10,11 +10,12 @@ class KeywordFinder:
 		article = NewsPlease.from_url(self.url)
 		self.lede = article.description
 		self.title = article.title
-		keywords = self.extractKeywords(self.lede)
+		keywords = self.extractKeywords(self.lede) if self.lede is not None else []
 		self.keyphrase_scores = self.wikipediaNormalizeScore(keywords)
 
 	def extractKeywords(self, text):
 		keywords = []
+		#print(text)
 		for sentence in sent_tokenize(text):
 			live = []
 			for name, pos, entity in tree2conlltags(ne_chunk(pos_tag(word_tokenize(sentence)))):
@@ -32,15 +33,16 @@ class KeywordFinder:
 		keyphraseScores = []
 		now = pendulum.now('UTC')
 		for phrase in keyphrases:
-			title = wikipedia.search(phrase)[0]
-			resp = requests.get('http://en.wikipedia.org/w/api.php',params = {'action':'query', 'prop':'revisions','rvprop':'timestamp','rvlimit':10, 'format':'json','titles':title})
-			if resp.status_code == 200:
-				for d in list(json.loads(json.dumps(resp.json()))['query']['pages'].values()):
-					final_title = title.split(" (")[0]
-					score = 0
-					for i,d2 in enumerate(d['revisions']):
-						score+=(((1/2)**i)*(pendulum.parse(d2['timestamp']).diff(now).in_hours()))
-					keyphraseScores.append((final_title,score))
+			if wikipedia.search(phrase):
+				title = wikipedia.search(phrase)[0]
+				resp = requests.get('http://en.wikipedia.org/w/api.php',params = {'action':'query', 'prop':'revisions','rvprop':'timestamp','rvlimit':10, 'format':'json','titles':title})
+				if resp.status_code == 200:
+					for d in list(json.loads(json.dumps(resp.json()))['query']['pages'].values()):
+						final_title = str(title.split(" (")[0])
+						score = 0
+						for i,d2 in enumerate(d['revisions']):
+							score+=(((1/2)**i)*(pendulum.parse(d2['timestamp']).diff(now).in_hours()))
+						keyphraseScores.append((final_title,score))
 		return keyphraseScores
 
 	def getKeyphrases(self):
