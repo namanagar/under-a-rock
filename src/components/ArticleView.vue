@@ -4,11 +4,11 @@
       <div v-for="(article, index) in sublists[sublistIndex]" :key="index" class="col-sm-12 col-md-4">
         <div class="card" id="card">
           <div class="card-header">
-            <h5>{{ article.name }} - {{ article.title }}</h5>
+            <p>{{ article.title }}</p>
           </div>
           <div class="card-body text-muted">
             <div style="margin-bottom: 1em">{{ article.lede }}...</div>
-            <a @click="openLink(article)" class="btn btn-sm btn-outline-secondary">keep reading</a>
+            <a @click="openLink(article)" class="btn btn-sm btn-outline-secondary">keep reading on {{ article.name.toLowerCase() }}</a>
           </div>
           <div class="card-footer text-muted">
             {{ formatKeywords(article.keywords) }}
@@ -34,7 +34,7 @@ export default {
       return str;
     },
     openLink(article) {
-      window.open(article.link, "_blank");
+      window.open(article.url, "_blank");
     }
   },
   computed: {
@@ -63,11 +63,14 @@ export default {
 }
 a {
   min-width: 100%;
+  font-family: "Lato", sans-serif;
 }
 .card-footer {
   font-size: 0.75em;
 }
-
+.card-body {
+  font-size: 0.85em;
+}
 @media screen and (min-width: 600px) {
     .sublist{
       margin-bottom: 1.5em;
