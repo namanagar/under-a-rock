@@ -7,11 +7,16 @@ class KeywordFinder:
 
 	def __init__(self, url):
 		self.url = url
-		article = NewsPlease.from_url(self.url)
-		self.lede = article.description
-		self.title = article.title
-		keywords = self.extractKeywords(self.lede) if self.lede is not None else []
-		self.keyphrase_scores = self.wikipediaNormalizeScore(keywords)
+		try:
+			article = NewsPlease.from_url(self.url)
+			self.lede = article.description
+			self.title = article.title
+			self.og_dict = {}
+			keywords = self.extractKeywords(self.lede) if self.lede is not None else []
+			self.keyphrase_scores = self.wikipediaNormalizeScore(keywords)
+		except:
+			self.keyphrase_scores = None
+			self.og_dict = None
 
 	def extractKeywords(self, text):
 		keywords = []
@@ -43,10 +48,20 @@ class KeywordFinder:
 						for i,d2 in enumerate(d['revisions']):
 							score+=(((1/2)**i)*(pendulum.parse(d2['timestamp']).diff(now).in_hours()))
 						keyphraseScores.append((final_title,score))
+						self.og_dict[final_title] = phrase
 		return keyphraseScores
 
 	def getKeyphrases(self):
-		return list(set([phrase for phrase,score in self.keyphrase_scores if score<335]))
+		if self.keyphrase_scores:
+			return list(set([phrase for phrase,score in self.keyphrase_scores if score<335]))
+		else:
+			return []
+
+	def getOriginalDict(self):
+		if self.og_dict:
+			return self.og_dict
+		else:
+			return {}
 
 
 
