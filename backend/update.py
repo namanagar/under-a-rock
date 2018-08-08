@@ -3,19 +3,23 @@ from tqdm import tqdm
 from newsplease import NewsPlease
 from keywordfinder import KeywordFinder
 from math import ceil
-#todo: things similar on wikipedia, scores for articles
+#todo: things similar on wikipedia, scores for articles, different colors,
 
 
-accounts=["cnnbrk","AP_Politics","BBCBreaking","Reuters","BreakingNews","AP"]
-account_names = {"cnnbrk":"CNN","AP_Politics":"AP","BBCBreaking":"BBC","Reuters":"Reuters","AP":"AP","BreakingNews":"NBC"}
-flaggedPhrases = ["reuters"]
-auth=tweepy.OAuthHandler("LYuZ8TRRBuJ7IQcoyyZYwe0uy","eIwCZsZ4IOQqe8p3nI4ybAJHcShILcpmwYkzLXW5xLSTplzDRl")
-auth.set_access_token("928145131886317568-6bAb5L7Xj9OfiPYfgGTfMrYG6kCdZjC", "iRivk0tnYtPHaTLlwNipd6pECm7RcOHrNp0hPVvqx8AWb")
-api = tweepy.API(auth)
+accounts=["cnnbrk","AP_Politics","BBCBreaking","Reuters","BreakingNews","AP","foxnewspolitics"]
+account_names = {"cnnbrk":"CNN","AP_Politics":"AP","BBCBreaking":"BBC","Reuters":"Reuters","AP":"AP","BreakingNews":"NBC","foxnewspolitics":"Fox News"}
+flaggedPhrases = ["reuters",'ap']
+
 
 f = open('other/credentials.txt')
 credentials = json.load(f)
 f.close()
+auth = tweepy.OAuthHandler(credentials["tweepyauth1"],credentials["tweepyauth2"])
+auth.set_access_token(credentials["tweepyaccess1"], credentials["tweepyaccess2"])
+
+auth=tweepy.OAuthHandler("LYuZ8TRRBuJ7IQcoyyZYwe0uy","eIwCZsZ4IOQqe8p3nI4ybAJHcShILcpmwYkzLXW5xLSTplzDRl")
+auth.set_access_token("928145131886317568-6bAb5L7Xj9OfiPYfgGTfMrYG6kCdZjC", "iRivk0tnYtPHaTLlwNipd6pECm7RcOHrNp0hPVvqx8AWb")
+api = tweepy.API(auth)
 conn = psycopg2.connect(dbname = credentials["dbname"],
                         user = credentials["user"],
                         host = 'localhost',
@@ -36,9 +40,13 @@ def updateTweetsInDatabase():
     for url,name,timestamp,tweet_text in tqdm(data):
         finder = KeywordFinder(url)
         keyphrases = [keyphrase for keyphrase in finder.getKeyphrases() if keyphrase.lower() not in flaggedPhrases]
-        lede = finder.lede
-        title = finder.title 
-        cur.execute('''INSERT INTO public.articles VALUES (%s,%s,%s,%s,%s,%s)''', (url,keyphrases,title,name,lede,timestamp))
+        if len(keyphrases)>0:
+            og_dict = finder.getOriginalDict()
+            lede = finder.lede
+            title = finder.title
+            cur.execute('''SELECT "title" FROM public.articles''')
+            if title not in [x[0] for x in list(cur.fetchall())]:
+                cur.execute('''INSERT INTO public.articles VALUES (%s,%s,%s,%s,%s,%s,%s)''', (url,keyphrases,title,name,lede,timestamp,[og_dict[k] for k in keyphrases]))
     print(f'Waiting to insert {len(data)} tweets into database')
     return
 
@@ -85,7 +93,7 @@ def removeExcessTweets(dateDict,lastTimestamp):
 
 def generateGraphs():
     cur.execute('TRUNCATE public.graphs')
-    seconds = [r*3600 for r in [3,6,12,24,48]]
+    seconds = [r*3600 for r in [3,4,5,6,12,24,48]]
     for amount in seconds:
         nodes=[]
         edges=[]
@@ -96,9 +104,9 @@ def generateGraphs():
         keywords_total = []
         urls = []
         kwd_to_urls = {}
-        for url,keywords,title,name,lede,timestamp in tweets:
+        for url,keywords,title,name,lede,timestamp,og_words in tweets:
             if title not in [qwe['title'] for qwe in urls]:
-                urls.append({'url':url,'name':account_names[name],'title':title,'keywords':keywords,'lede':lede})
+                urls.append({'url':url,'name':account_names[name],'title':title,'keywords':keywords,'lede':lede,'highlights':og_words})
             keywords_total.extend(keywords)
             for c,keyword in enumerate(keywords):
                 if keyword not in kwd_to_urls.keys():
