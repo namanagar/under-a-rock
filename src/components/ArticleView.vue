@@ -45,9 +45,6 @@ export default {
     },
     prevPage(){
       this.pageNumber--;
-    },
-    pageZero(){
-      this.pageNumber == 0; //called when graphs switch
     }
   },
   computed: {
@@ -60,6 +57,11 @@ export default {
       const start = this.pageNumber * this.size,
       end = start + this.size;
       return this.articles.slice(start, end);
+    }
+  },
+  watch: {
+    articles: function(){
+      this.pageNumber = 0;
     }
   }
 };

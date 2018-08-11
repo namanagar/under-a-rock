@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <Menu :options="this.options" @get-graphs="getGraphs"></Menu>
+    <Menu :options="this.options" @get-graphs="getGraphs" :filtered="boolSelected" @clear-nodes="clearNodes"></Menu>
     <div class="row" v-if="this.nodes.length != 0">
       <div class="col-xs-12 col-sm-12 col-md-6">
         <d3-network class="network" :net-nodes="scaledNodes" :net-links="links" :options="graphOptions" :selection="selection"
@@ -95,6 +95,9 @@ export default {
         }
       });
       return filtered;
+    },
+    boolSelected: function(){
+      return (this.selectedNodes.length == 0) ? false : true
     }
   },
   methods: {
@@ -116,6 +119,9 @@ export default {
       this.selectedNodes.includes(node)
         ? this.selectedNodes.splice(this.selectedNodes.indexOf(node), 1)
         : this.selectedNodes.push(node);
+    },
+    clearNodes(){
+      this.selectedNodes = []
     }
   },
   components: {
@@ -165,7 +171,11 @@ a {
   font-size: 0.85em;
   fill: rgba(44, 62, 80, 0.75);
 }
-
+@media screen and (max-width: 576px) { 
+    .network{
+      max-height: 75%;
+    }
+ }
 .node {
   fill: #4cb191;
   stroke: #2c3e50;

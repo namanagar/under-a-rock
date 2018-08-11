@@ -29,8 +29,11 @@
             <div class="span4" id="titleClicked">
                 <img id="logoClicked" src="../assets/logo.png">
             </div>
-             <div class="span4 ml-auto">
+             <div class="span4 ml-auto" v-if="!filtered">
                 <h4>click on nodes to filter articles</h4>
+            </div>
+            <div class="span4 ml-auto" v-if="filtered">
+                <h4 @click="clear">click to deselect all</h4>
             </div>
             <div class="span4 ml-auto">
                 <div v-for="option in this.options" :key="option" class="btn-group inline" id="options">
@@ -46,7 +49,7 @@
 <script>
 export default {
   name: "Menu",
-  props: ["options"],
+  props: ["options", "filtered"],
   data() {
     return {
         selected: '',
@@ -62,6 +65,9 @@ export default {
     getGraphs(option){
         this.clicked = true
         this.$emit("get-graphs", option)
+    },
+    clear(){
+      this.$emit("clear-nodes")
     }
   }
 };
