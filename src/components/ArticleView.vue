@@ -6,7 +6,7 @@
             {{ article.title }}
           </div>
           <div class="card-body text-muted">
-            <div style="margin-bottom: 1em">{{ article.lede }}...</div>
+            <div style="margin-bottom: .75em">{{ article.lede }}...</div>
             <a @click="openLink(article)" class="btn btn-sm btn-outline-secondary">keep reading on {{ article.name.toLowerCase() }}</a>
           </div>
         </div>

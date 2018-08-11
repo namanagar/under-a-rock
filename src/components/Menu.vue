@@ -33,7 +33,7 @@
                 <h4>click on nodes to filter articles</h4>
             </div>
             <div class="span4 ml-auto" v-if="filtered">
-                <h4 @click="clear">click to deselect all</h4>
+                <h4 @click="clear">click here to deselect all</h4>
             </div>
             <div class="span4 ml-auto">
                 <div v-for="option in this.options" :key="option" class="btn-group inline" id="options">
