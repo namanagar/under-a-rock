@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="container-fluid">
+  <div id="app">
     <Menu :options="this.options" @get-graphs="getGraphs"></Menu>
     <div class="row" v-if="this.nodes.length != 0">
       <div class="col-xs-12 col-sm-12 col-md-6">
@@ -157,7 +157,7 @@ a {
 }
 
 .network{
-  max-height: 75%;
+  max-height: 100%;
   max-width: 100%;
 }
 .node-label {

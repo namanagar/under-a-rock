@@ -15,7 +15,7 @@
     <div class="row-fluid">
       <div class="col-sm-12 col-md-12">
         <div class="row justify-content-center">
-          <div v-for="option in this.options" :key="option">
+          <div v-for="option in this.options" :key="option" id="options">
             <label :class="[(option == selected) ? 'btn btn-secondary' : 'btn btn-outline-secondary']">
               <input type="radio" name="options" autocomplete="off" :value="option" v-model="selected" @click="getGraphs(option)">{{ getOptionString(option) }}
             </label>
@@ -103,6 +103,9 @@ export default {
 @media screen and (max-width: 576px) { 
     #titleClicked{
         display: none !important;
+    }
+    #options input{
+      font-size: .5em;
     }
  }
 </style>

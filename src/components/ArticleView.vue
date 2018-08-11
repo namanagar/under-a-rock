@@ -1,7 +1,6 @@
 <template>
   <div class="col-sm-12 col-md-12">
-    <div v-for="(sublist, sublistIndex) in sublists" :key="sublistIndex" class="row sublist">
-      <div v-for="(article, index) in sublists[sublistIndex]" :key="index" class="col-sm-12 col-md-12">
+    <div v-for="article in paginatedData" :key="article.url">
         <div class="card" id="card">
           <div class="card-header">
             {{ article.title }}
@@ -11,6 +10,12 @@
             <a @click="openLink(article)" class="btn btn-sm btn-outline-secondary">keep reading on {{ article.name.toLowerCase() }}</a>
           </div>
         </div>
+    </div>
+    <div class="row">
+      <button class="btn btn-sm btn-outline-secondary float-left" @click="clear()">clear nodes</button>
+      <div class="btn-group float-right" role="group" aria-label="Basic example">
+        <button type="button" class="btn btn-sm btn-outline-secondary" @click="prevPage()">left</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" @click="nextPage()">right</button>
       </div>
     </div>
   </div>
@@ -22,7 +27,8 @@ export default {
   props: ["articles"],
   data() {
     return {
-      pageNumber: 0
+      pageNumber: 0,
+      size: 3 //3 articles per "page"
     };
   },
   methods: {
@@ -36,9 +42,11 @@ export default {
       window.open(article.url, "_blank");
     },
     nextPage(){
+      if (this.pageNumber == this.pageCount) { return }
       this.pageNumber++;
     },
     prevPage(){
+      if (this.pageNumber == 0) { return }
       this.pageNumber--;
     }
   },
@@ -59,8 +67,13 @@ export default {
     },
     pageCount(){
       let l = this.articles.length,
-          s = 3; // 3 per page
+          s = this.size;
       return Math.floor(l/s);
+    },
+    paginatedData(){
+      const start = this.pageNumber * this.size,
+      end = start + this.size;
+      return this.articles.slice(start, end);
     }
   }
 };
@@ -82,10 +95,10 @@ a {
 .card-body {
   font-size: 0.85em;
 }
+.card-header {
+  font-family: "Lato", sans-serif;
+}
 @media screen and (min-width: 600px) {
-    .sublist{
-      margin-bottom: .5em;
-    }
     #card{
       text-align: center;
       margin: 0.25em;
