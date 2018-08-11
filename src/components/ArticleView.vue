@@ -12,10 +12,9 @@
         </div>
     </div>
     <div class="row">
-      <button class="btn btn-sm btn-outline-secondary float-left" @click="clear()">clear nodes</button>
-      <div class="btn-group float-right" role="group" aria-label="Basic example">
-        <button type="button" class="btn btn-sm btn-outline-secondary" @click="prevPage()">left</button>
-        <button type="button" class="btn btn-sm btn-outline-secondary" @click="nextPage()">right</button>
+      <div class="btn-group ml-auto mr-auto" role="group" aria-label="Basic example">
+        <button :disabled="this.pageNumber == 0" type="button" class="btn btn-sm btn-outline-secondary" @click="prevPage()">left</button>
+        <button :disabled="this.pageNumber == this.pageCount -1" type="button" class="btn btn-sm btn-outline-secondary" @click="nextPage()">right</button>
       </div>
     </div>
   </div>
@@ -42,29 +41,16 @@ export default {
       window.open(article.url, "_blank");
     },
     nextPage(){
-      if (this.pageNumber == this.pageCount) { return }
       this.pageNumber++;
     },
     prevPage(){
-      if (this.pageNumber == 0) { return }
       this.pageNumber--;
+    },
+    pageZero(){
+      this.pageNumber == 0; //called when graphs switch
     }
   },
   computed: {
-    sublists() {
-      var sublists = [];
-      var chunk = [];
-      var chunkCounter = 0;
-      for (var i = 0; i < this.articles.length; i++) {
-        chunk.push(this.articles[i]);
-        if (chunk.length == 1 | chunk.length == this.articles.length - chunkCounter*1) {
-          sublists.push(chunk);
-          chunk = [];
-          chunkCounter += 1;
-        }
-      }
-      return sublists;
-    },
     pageCount(){
       let l = this.articles.length,
           s = this.size;

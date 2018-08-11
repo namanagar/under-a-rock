@@ -54,7 +54,7 @@ export default {
     };
   },
   methods: {
-     getOptionString(option) {
+    getOptionString(option) {
       return option < 24
         ? option + " hours"
         : option / 24 > 1 ? option / 24 + " days" : option / 24 + " day";

@@ -6,8 +6,8 @@
         <d3-network class="network" :net-nodes="scaledNodes" :net-links="links" :options="graphOptions" :selection="selection"
                     @node-click="selectNode"></d3-network>
       </div>
-      <div class="col-xs-12 col-sm-12 col-md-6" v-if="this.filteredArticles.length > 0">
-        <ArticleView :articles="this.filteredArticles"></ArticleView>
+      <div class="col-xs-12 col-sm-12 col-md-6">
+        <ArticleView ref="articleView" :articles="this.filteredArticles"></ArticleView>
       </div>
     </div>
   </div>
