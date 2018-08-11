@@ -28,7 +28,6 @@
         <div class="row-fluid" id="postrow">
             <div class="span4" id="titleClicked">
                 <img id="logoClicked" src="../assets/logo.png">
-                <h3 >under a rock<span style="font-size: 2em; color: #4CB191">.</span></h3>
             </div>
              <div class="span4 ml-auto">
                 <h4>click on nodes to filter articles</h4>

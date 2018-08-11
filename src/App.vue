@@ -1,19 +1,12 @@
 <template>
-  <div id="app" class="container">
+  <div id="app" class="container-fluid">
     <Menu :options="this.options" @get-graphs="getGraphs"></Menu>
-    <div class="row-fluid" v-if="this.nodes.length != 0">
-      <div class="col-sm-12 col-md-12">
+    <div class="row" v-if="this.nodes.length != 0">
+      <div class="col-xs-12 col-sm-12 col-md-6">
         <d3-network class="network" :net-nodes="scaledNodes" :net-links="links" :options="graphOptions" :selection="selection"
                     @node-click="selectNode"></d3-network>
       </div>
-    </div>
-    <div class="row-fluid padded" v-if="this.articles.length > 0">
-      <div class="col-sm-12 col-md-12">
-        <h4>filtered articles</h4>
-      </div>
-    </div>
-    <div class="row-fluid padded" v-if="this.filteredArticles.length > 0">
-      <div class="col-sm-12 col-md-12">
+      <div class="col-xs-12 col-sm-12 col-md-6" v-if="this.filteredArticles.length > 0">
         <ArticleView :articles="this.filteredArticles"></ArticleView>
       </div>
     </div>
