@@ -113,5 +113,8 @@ export default {
     #options input{
       font-size: .5em;
     }
+    #post-click{
+      max-height: 10vh;
+    }
  }
 </style>

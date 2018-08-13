@@ -174,6 +174,7 @@ a {
 @media screen and (max-width: 576px) { 
     .network{
       max-height: 75%;
+      min-height: 75%;
     }
  }
 .node {
