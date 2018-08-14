@@ -164,6 +164,7 @@ a {
 
 .network{
   max-height: 100%;
+  min-height: 75vh !important;
   max-width: 100%;
 }
 .node-label {
@@ -171,12 +172,7 @@ a {
   font-size: 0.85em;
   fill: rgba(44, 62, 80, 0.75);
 }
-@media screen and (max-width: 576px) { 
-    .network{
-      max-height: 75%;
-      min-height: 75%;
-    }
- }
+
 .node {
   fill: #4cb191;
   stroke: #2c3e50;
