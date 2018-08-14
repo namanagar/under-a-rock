@@ -33,7 +33,7 @@ export default {
         strLinks: true,
         nodeLabels: true,
         //delete linkwidth when issue resolved with stroke width attribute below
-        linkWidth: 3
+        linkWidth: 2
       }
     };
   },
@@ -53,7 +53,7 @@ export default {
           tid: el.target,
           name: el.id,
           //stroke width not currently working
-          _svgAttrs: { "stroke-width" : el.score.toFixed(2) , 'stroke': "rgba(44, 62, 80, 0.4)"}
+          _svgAttrs: { "stroke-width" : el.score.toFixed(2) , 'stroke': "rgba(225, 225, 231, 0.6)"}
         });
       });
       return links;
@@ -137,7 +137,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: rgb(225, 225, 231);
   margin-top: 20px;
 }
 
@@ -170,21 +170,23 @@ a {
 .node-label {
   font-family: "Lato", sans-serif;
   font-size: 0.85em;
-  fill: rgba(44, 62, 80, 0.75);
+  fill: rgba(225, 225, 231, 0.95);
 }
 
 .node {
-  fill: #4cb191;
-  stroke: #2c3e50;
-  stroke-width: 2px;
+  fill: rgb(32, 153, 115) ; 
+  stroke: rgba(225, 225, 231, 0.7);
+  stroke-width: 1.5px;
 }
 
 .selected {
   stroke: #caa455 !important;
+  stroke-width: 2.5px;
 }
 
 .link .selected {
   stroke: rgba(202, 164, 85, 0.6);
+  stroke-width: 4px;
 }
 
 </style>

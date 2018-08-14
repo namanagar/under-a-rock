@@ -13,8 +13,8 @@
     </div>
     <div class="row">
       <div class="btn-group ml-auto mr-auto" role="group" aria-label="Basic example">
-        <button :disabled="this.pageNumber == 0" type="button" class="btn btn-sm btn-outline-secondary" @click="prevPage()">left</button>
-        <button :disabled="this.pageNumber == this.pageCount -1" type="button" class="btn btn-sm btn-outline-secondary" @click="nextPage()">right</button>
+        <button :disabled="this.pageNumber == 0" type="button" class="btn btn-sm btn-outline-light" @click="prevPage()">left</button>
+        <button :disabled="this.pageNumber == this.pageCount -1" type="button" class="btn btn-sm btn-outline-light" @click="nextPage()">right</button>
       </div>
     </div>
   </div>
@@ -72,6 +72,7 @@ export default {
   text-align: left;
   margin: .5em;
   font-size: .9em;
+  color: #2c3e50;
 }
 a {
   min-width: 100%;

@@ -4,7 +4,7 @@
     <div class="row-fluid">
       <div class="col-sm-12 col-md-12">
         <img id="logo" src="../assets/logo.png">
-        <h3>under a rock<span style="font-size: 2em; color: #4CB191">.</span></h3>
+        <h3>under a rock<span style="font-size: 2em; color: #4CB191">.</span><small class="text-muted" style="font-size: 0.35em">(alpha)</small></h3>
       </div>
     </div>
     <div class="row-fluid padded">
@@ -16,7 +16,7 @@
       <div class="col-sm-12 col-md-12">
         <div class="row justify-content-center">
           <div v-for="option in this.options" :key="option" id="options">
-            <label :class="[(option == selected) ? 'btn btn-secondary' : 'btn btn-outline-secondary']">
+            <label :class="[(option == selected) ? 'btn btn-light' : 'btn btn-outline-light']">
               <input type="radio" name="options" autocomplete="off" :value="option" v-model="selected" @click="getGraphs(option)">{{ getOptionString(option) }}
             </label>
           </div>
@@ -37,7 +37,7 @@
             </div>
             <div class="span4 ml-auto">
                 <div v-for="option in this.options" :key="option" class="btn-group inline" id="options">
-                    <label :class="[(option == selected) ? 'btn btn-sm btn-secondary' : 'btn btn-sm btn-outline-secondary']">
+                    <label :class="[(option == selected) ? 'btn btn-sm btn-light' : 'btn btn-sm btn-outline-light']">
                         <input type="radio" name="options" autocomplete="off" :value="option" v-model="selected" @click="getGraphs(option)">{{ getOptionString(option) }}
                     </label>
                 </div>
