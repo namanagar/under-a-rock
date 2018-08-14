@@ -25,24 +25,22 @@
     </div>
     </div>
     <div v-if="clicked === true" id="post-click">
-        <div class="row-fluid" id="postrow">
-            <div class="span4" id="titleClicked">
-                <img id="logoClicked" src="../assets/logo.png">
+        <nav class="navbar">
+          <a class="navbar-brand">
+            <img id="logoClicked" src="../assets/logo.png" alt="Logo">
+          </a>
+          <div v-if="!filtered">
+                <h4>click nodes to filter articles</h4>
             </div>
-             <div class="span4 ml-auto" v-if="!filtered">
-                <h4>click on nodes to filter articles</h4>
-            </div>
-            <div class="span4 ml-auto" v-if="filtered">
+            <div v-if="filtered">
                 <h4 @click="clear">click here to deselect all</h4>
             </div>
-            <div class="span4 ml-auto">
-                <div v-for="option in this.options" :key="option" class="btn-group inline" id="options">
+          <div v-for="option in this.options" :key="option" class="btn-group inline" id="options">
                     <label :class="[(option == selected) ? 'btn btn-sm btn-light' : 'btn btn-sm btn-outline-light']">
                         <input type="radio" name="options" autocomplete="off" :value="option" v-model="selected" @click="getGraphs(option)">{{ getOptionString(option) }}
                     </label>
                 </div>
-            </div>
-        </div>
+        </nav>
     </div>
   </div>
 </template>
@@ -79,7 +77,8 @@ export default {
 }
 
 #logoClicked {
-    max-width: 15vmin;
+    max-width: 9vh;
+    max-height: 9vh;
 }
 
 [type="radio"] {
@@ -95,19 +94,8 @@ export default {
     margin-top: 40px;
 }
 
-#postrow{
-    display: table;
-    vertical-align:middle;
-}
-
-.span4{
-    display: table-cell;
-    float: none;
-    width: 15%;
-}
-
 @media screen and (max-width: 576px) { 
-    #titleClicked{
+    #logoClicked{
         display: none !important;
     }
     #options input{
