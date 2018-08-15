@@ -12,9 +12,9 @@
         </div>
     </div>
     <div class="row">
-      <div class="btn-group ml-auto mr-auto" role="group" aria-label="Basic example">
-        <button :disabled="this.pageNumber == 0" type="button" class="btn btn-sm btn-outline-light" @click="prevPage()">left</button>
-        <button :disabled="this.pageNumber == this.pageCount -1" type="button" class="btn btn-sm btn-outline-light" @click="nextPage()">right</button>
+      <div class="btn-group ml-auto mr-auto" role="group" aria-label="Page navigation">
+        <button :disabled="this.pageNumber == 0" type="button" class="btn btn-sm btn-outline-light" @click="prevPage()">previous</button>
+        <button :disabled="this.pageNumber == this.pageCount - 1 || this.pageCount == 0" type="button" class="btn btn-sm btn-outline-light" @click="nextPage()">next</button>
       </div>
     </div>
   </div>
