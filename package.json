@@ -12,7 +12,8 @@
   "dependencies": {
     "axios": "^0.18.0",
     "vue": "^2.5.11",
-    "vue-d3-network": "^0.1.26"
+    "vue-d3-network": "^0.1.26",
+    "vue-slider-component": "^2.7.6"
   },
   "browserslist": [
     "> 1%",

@@ -40,7 +40,7 @@ export default {
   mounted: function() {
      axios.get("https://underarock.tk/graphs/options").then(response => {
         this.options = response.data;
-      })
+      });
   },
   computed: {
     links: function() {
@@ -161,7 +161,9 @@ a {
 .padded {
   margin-top: 2em;
 }
-
+.semipadded{
+  margin-top: 1.5em;
+}
 .network{
   max-height: 100%;
   min-height: 75vh !important;
