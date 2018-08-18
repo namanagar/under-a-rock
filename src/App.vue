@@ -1,12 +1,26 @@
 <template>
   <div id="app">
-    <Menu :options="this.options" @get-graphs="getGraphs" :filtered="boolSelected" @clear-nodes="clearNodes"></Menu>
-    <div class="row" v-if="this.nodes.length != 0">
-      <div class="col-xs-12 col-sm-12 col-md-6">
-        <d3-network class="network" :net-nodes="scaledNodes" :net-links="links" :options="graphOptions" :selection="selection"
-                    @node-click="selectNode"></d3-network>
+    <Menu :clicked="this.clicked" :filtered="boolSelected" @clear-nodes="clearNodes" style="margin-bottom: 2.5em"></Menu>
+    <div class="row-fluid" v-if="!this.clicked">
+      <div class="col-sm-12 col-md-12">
+        <div class="row justify-content-center" v-if="this.optionStrings.length > 0">
+          <vue-slider :width="this.sliderWidth" v-bind="styling" :data="this.optionStrings" v-model="selected"></vue-slider>
+        </div>
       </div>
-      <div class="col-xs-12 col-sm-12 col-md-6">
+    </div>
+    <div class="row" v-if="clicked">
+      <div class="col-xs-12 col-sm-12 col-lg-6">
+         <div class="row justify-content-center">
+          <div class="col-sm-12">
+            <vue-slider id="slider" :width="this.sliderWidth" v-bind="styling" :data="this.optionStrings" v-model="selected"></vue-slider>
+          </div>
+          <div class="col-sm-12" v-if="this.nodes.length != 0">
+             <d3-network class="network" :net-nodes="scaledNodes" :net-links="links" :options="graphOptions" :selection="selection"
+                    @node-click="selectNode"></d3-network>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-12 col-sm-12 col-lg-6" v-if="this.nodes.length != 0" style="margin-bottom: 100px">
         <ArticleView ref="articleView" :articles="this.filteredArticles"></ArticleView>
       </div>
     </div>
@@ -18,6 +32,7 @@ const axios = require("axios");
 import D3Network from "vue-d3-network";
 import ArticleView from "./components/ArticleView";
 import Menu from "./components/Menu"
+import vueSlider from 'vue-slider-component';
 export default {
   name: "app",
   data() {
@@ -34,6 +49,38 @@ export default {
         nodeLabels: true,
         //delete linkwidth when issue resolved with stroke width attribute below
         linkWidth: 2
+      },
+      clicked: false,
+      selected: 'slide to pick',
+      styling: {
+        value: 'slide to pick',
+        lazy: true,
+        tooltip: "false",
+        disabled: false,
+        piecewise: true,
+        piecewiseLabel: true,
+        piecewiseStyle: {
+          "backgroundColor": "rgb(225, 225, 231)",
+          "visibility": "visible",
+          "width": "1em",
+          "height": "1em"
+        },
+        piecewiseActiveStyle: {
+          "backgroundColor": "rgb(32, 153, 115)"
+        },
+        labelActiveStyle: {
+          "color": "rgb(225, 225, 231)",
+          "fontFamily": "Work Sans",
+          "fontSize": "0.85em"
+        },
+        labelStyle: {
+          "color": "rgb(225, 225, 231)",
+          "fontFamily": "Work Sans",
+          "fontSize": "0.85em"
+        },
+        processStyle: {
+          "backgroundColor": "rgb(32, 153, 115)"
+        }
       }
     };
   },
@@ -98,6 +145,22 @@ export default {
     },
     boolSelected: function(){
       return (this.selectedNodes.length == 0) ? false : true
+    },
+    optionStrings(options) {
+      var newArr = []
+      newArr.push("slide to pick")
+      this.options.forEach(option => {
+        newArr.push(option < 24
+          ? option + " hours"
+          : option / 24 > 1 ? option / 24 + " days" : option / 24 + " day")
+      });
+      return newArr;
+    },
+    sliderWidth(){
+      if (this.clicked){
+        return "80%"
+      }
+      else return "60%"
     }
   },
   methods: {
@@ -122,12 +185,29 @@ export default {
     },
     clearNodes(){
       this.selectedNodes = []
+    },
+    getHoursFromString(str){
+      // "2 days" -> 48 or "8 hours" -> 8
+      var digit = parseInt(str.match(/\d+/)[0])
+      if (str.indexOf("day") != -1){
+        return digit * 24;
+      }
+      else return digit;
+    }
+  },
+  watch: {
+    selected: function(newSelected, oldSelected){
+      if (newSelected != oldSelected){
+        this.clicked = true;
+        this.getGraphs(this.getHoursFromString(newSelected))
+      }
     }
   },
   components: {
     D3Network,
     ArticleView,
-    Menu
+    Menu,
+    vueSlider
   }
 };
 </script>
@@ -138,7 +218,8 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: rgb(225, 225, 231);
-  margin-top: 20px;
+  margin-top: 5px;
+  max-width: 100vw !important;
 }
 
 h1,
@@ -190,5 +271,13 @@ a {
   stroke: rgba(202, 164, 85, 0.6);
   stroke-width: 4px;
 }
+#slider{
+  margin-left: 5em;
+}
 
+@media screen and (max-width: 576px) {
+    #slider{
+      margin-left: 2.25em;
+    }
+  }
 </style>
