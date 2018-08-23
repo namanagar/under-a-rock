@@ -3,7 +3,7 @@
     <Menu :clicked="this.clicked" :filtered="boolSelected" @clear-nodes="clearNodes" style="margin-bottom: 2.5em"></Menu>
     <div class="row-fluid" v-if="!this.clicked">
       <div class="col-sm-12 col-md-12">
-        <div class="row justify-content-center" v-if="this.optionStrings.length > 0">
+        <div class="row justify-content-center" id="sliderContainer" v-if="this.optionStrings.length > 0">
           <vue-slider :width="this.sliderWidth" v-bind="styling" :data="this.optionStrings" v-model="selected"></vue-slider>
         </div>
       </div>
@@ -44,16 +44,16 @@ export default {
       selectedNodes: [],
       graphOptions: {
         canvas: false,
-        force: 1100,
+        force: 1400,
         strLinks: true,
         nodeLabels: true,
         //delete linkwidth when issue resolved with stroke width attribute below
         linkWidth: 2
       },
       clicked: false,
-      selected: 'slide to pick',
+      selected: 'slide',
       styling: {
-        value: 'slide to pick',
+        value: 'slide',
         lazy: true,
         tooltip: "false",
         disabled: false,
@@ -148,11 +148,11 @@ export default {
     },
     optionStrings(options) {
       var newArr = []
-      newArr.push("slide to pick")
+      newArr.push("slide")
       this.options.forEach(option => {
         newArr.push(option < 24
-          ? option + " hours"
-          : option / 24 > 1 ? option / 24 + " days" : option / 24 + " day")
+          ? option + "h"
+          : option / 24 > 1 ? option / 24 + "d" : option / 24 + "d")
       });
       return newArr;
     },
@@ -160,7 +160,10 @@ export default {
       if (this.clicked){
         return "80%"
       }
-      else return "60%"
+      else if (window.innerWidth < 576){
+        return "95%"
+      }
+      else return "60%";
     }
   },
   methods: {
@@ -189,7 +192,7 @@ export default {
     getHoursFromString(str){
       // "2 days" -> 48 or "8 hours" -> 8
       var digit = parseInt(str.match(/\d+/)[0])
-      if (str.indexOf("day") != -1){
+      if (str.indexOf("d") != -1){
         return digit * 24;
       }
       else return digit;
@@ -253,7 +256,11 @@ a {
 .node-label {
   font-family: "Lato", sans-serif;
   font-size: 0.85em;
-  fill: rgba(225, 225, 231, 0.95);
+  fill: rgba(225, 225, 231, 0.98);
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 .node {
@@ -278,6 +285,7 @@ a {
 @media screen and (max-width: 576px) {
     #slider{
       margin-left: 2.25em;
+      max-width: 97.5% !important;
     }
-  }
+  } 
 </style>
