@@ -176,10 +176,9 @@ export default {
   },
   methods: {
     getNodeSize(size){
-      console.log(size)
-      let newSize = size * 35
-      if (newSize < 20) { return 20 }
-      else if (newSize > 50) {  if (this.selected > 12) { return 40 } else { return 50 } }
+      let newSize = size * 10
+      if (newSize < 15) { return 15 }
+      else if (newSize > 50) {  return 50  }
       else return newSize
     },
     getGraphs(option) {
