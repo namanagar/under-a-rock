@@ -15,8 +15,8 @@
             <vue-slider id="slider" :width="this.sliderWidth" v-bind="styling" :data="this.optionStrings" v-model="selected"></vue-slider>
           </div>
           <div class="col-sm-12" v-if="this.nodes.length != 0">
-             <d3-network class="network" :net-nodes="scaledNodes" :net-links="links" :options="graphOptions" :selection="selection"
-                    @node-click="selectNode"></d3-network>
+             <d3-network class="network" ref='net' :net-nodes="scaledNodes" :net-links="links" :options="graphOptions" :selection="selection"
+                    @node-click="selectNode" @screen-shot="screenshotDone"></d3-network>
           </div>
           <div class="col-sm-12">
             <div v-if="!boolSelected">
@@ -204,6 +204,12 @@ export default {
         return digit * 24;
       }
       else return digit;
+    },
+    takeScreenshot(){
+      this.$refs.net.screenShot("Under-A-Rock")
+    },
+    screenshotDone(){
+      console.log("screenshot saved")
     }
   },
   watch: {
