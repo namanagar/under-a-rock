@@ -29,7 +29,14 @@
         </div>
       </div>
       <div class="col-xs-12 col-sm-12 col-lg-6" v-if="this.nodes.length != 0">
-        <ArticleView ref="articleView" :articles="this.filteredArticles"></ArticleView>
+        <div class="row">
+          <div class="col-xs-12 col-sm-12 col-lg-12" style="text-align: left">
+            <span v-for="word in selectedNodes" :key="word" class="badge badge-pill badge-light no-select">{{word.id}}</span>
+          </div>
+        </div>
+        <div class="row semipadded">
+          <ArticleView ref="articleView" :articles="this.filteredArticles"></ArticleView>
+        </div>
       </div>
     </div>
   </div>
@@ -301,6 +308,11 @@ a {
 
 #slider{
   margin-left: 5em;
+}
+
+.badge{
+  font-family: "Work Sans";
+  margin-left: 0.5em;
 }
 
 @media screen and (max-width: 576px) {
