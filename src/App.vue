@@ -223,6 +223,7 @@ export default {
     selected: function(newSelected, oldSelected){
       if (newSelected != oldSelected){
         this.clicked = true;
+        document.location = document.location + "#";
         this.getGraphs(this.getHoursFromString(newSelected))
       }
     }
