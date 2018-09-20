@@ -68,7 +68,12 @@ export default {
     paginatedData(){
       const start = this.pageNumber * this.size,
       end = start + this.size;
-      return this.articles.slice(start, end);
+      return this.sortedArticles.slice(start, end);
+    },
+    sortedArticles(){
+      return this.articles.sort(function(a, b){
+        return b.timestamp - a.timestamp;
+      })
     }
   },
   watch: {
