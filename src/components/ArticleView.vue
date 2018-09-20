@@ -11,13 +11,13 @@
           </div>
         </div>
     </div>
-    <div class="row">
+    <div class="row no-gutters">
       <div class="ml-auto">
         <button :disabled="this.pageNumber == 0" type="button" class="btn btn-sm btn-outline-light" @click="pageZero()">first</button>
       </div>
       <div class="btn-group ml-auto mr-auto" role="group" aria-label="Page navigation">
-        <button :disabled="this.pageNumber == 0" type="button" class="btn btn-sm btn-outline-light" @click="prevPage()">previous</button>
-        <button :disabled="this.pageNumber == this.pageCount - 1 || this.pageCount == 0" type="button" class="btn btn-sm btn-outline-light" @click="nextPage()">next</button>
+        <button :disabled="this.pageNumber == 0" type="button" class="btn btn-sm btn-outline-light" @click="prevPage()">🠄</button>
+        <button :disabled="this.pageNumber == this.pageCount - 1 || this.pageCount == 0" type="button" class="btn btn-sm btn-outline-light" @click="nextPage()">🠆</button>
       </div>
       <div class="mr-auto">
         <button :disabled="this.pageNumber == this.pageCount - 1 || this.pageCount == 0" type="button" class="btn btn-sm btn-outline-light" @click="pageLast()">last</button>

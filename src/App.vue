@@ -1,16 +1,16 @@
 <template>
   <div id="app">
     <Menu :clicked="this.clicked"></Menu>
-    <div class="row-fluid" v-if="!this.clicked">
+    <div class="row no-gutters" v-if="!this.clicked">
       <div class="col-sm-12 col-md-12">
-        <div class="row justify-content-center" id="sliderContainer" v-if="this.optionStrings.length > 0">
+        <div class="row no-gutters justify-content-center" id="sliderContainer" v-if="this.optionStrings.length > 0">
           <vue-slider :width="this.sliderWidth" v-bind="styling" :data="this.optionStrings" v-model="selected"></vue-slider>
         </div>
       </div>
     </div>
-    <div class="row" v-if="clicked">
+    <div class="row no-gutters" v-if="clicked">
       <div class="col-xs-12 col-sm-12 col-lg-6">
-         <div class="row justify-content-center">
+         <div class="row no-gutters justify-content-center">
           <div class="col-sm-12">
             <vue-slider id="slider" :width="this.sliderWidth" v-bind="styling" :data="this.optionStrings" v-model="selected"></vue-slider>
           </div>
@@ -29,12 +29,12 @@
         </div>
       </div>
       <div class="col-xs-12 col-sm-12 col-lg-6" v-if="this.nodes.length != 0">
-        <div class="row">
+        <!-- <div class="row">
           <div class="col-xs-12 col-sm-12 col-lg-12" style="text-align: left">
             <span v-for="word in selectedNodes" :key="word" class="badge badge-pill badge-light no-select">{{word.id}}</span>
           </div>
-        </div>
-        <div class="row semipadded">
+        </div> -->
+        <div class="row no-gutters semipadded">
           <ArticleView ref="articleView" :articles="this.filteredArticles"></ArticleView>
         </div>
       </div>
@@ -244,7 +244,7 @@ export default {
   text-align: center;
   color: rgb(225, 225, 231);
   margin-top: 5px;
-  margin-bottom: 5em;
+  margin-bottom: 5vh;
   max-width: 100vw !important;
 }
 
