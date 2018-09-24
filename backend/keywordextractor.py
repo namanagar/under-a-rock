@@ -1,14 +1,13 @@
-from newsplease import NewsPlease
+import wikipedia, requests, pendulum, json
 from nltk import sent_tokenize, word_tokenize, pos_tag, ne_chunk
 from nltk.chunk import tree2conlltags
-import wikipedia, requests, pendulum, json
 
 
-class KeywordFinder:
+class KeywordExtractor:
 
 	def __init__(self, text):
-		keywords = self.extractKeywords(text) if text is not None else []
-		self.keyphrase_scores = self.wikipediaNormalizeScore(keywords)
+		if text is not None and len(text)>3:
+			self.keyphrase_scores = self.wikipediaNormalizeScore(self.removeSubsets(self.extractKeywords(text[:400])))
 
 	def extractKeywords(self, text):
 		keywords = []
@@ -42,10 +41,23 @@ class KeywordFinder:
 						keyphraseScores.append((final_title,score))
 		return keyphraseScores
 
+	def removeSubsets(self, keywords):
+		finalkwds = list(keywords)
+		for i in range(len(keywords)-1):
+			for j in range(i+1,len(keywords)):
+				if keywords[i] in keywords[j]:
+					if keywords[i] in finalkwds:
+						finalkwds.remove(keywords[i]) 
+				elif keywords[j] in keywords[i]:
+					if keywords[j] in finalkwds:
+						finalkwds.remove(keywords[j])
+		return finalkwds
+
+
 	def getKeyphrases(self):
-		if self.keyphrase_scores:
-			return list(set([phrase for phrase,score in self.keyphrase_scores if score<250]))
-		else:
+		try:
+			return list(set([phrase for phrase,score in self.keyphrase_scores if score<335]))
+		except AttributeError:
 			return []
 
 
