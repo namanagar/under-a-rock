@@ -9,7 +9,7 @@
 
 <h4 align="center">The fastest way to catch up on the news.</h4>
 
-![screenshot](https://raw.githubusercontent.com/namanagar/under-a-rock/master/working_screenshot.png)
+![screenshot](https://raw.githubusercontent.com/namanagar/under-a-rock/master/working_screenshot.PNG)
 
 ## Key Features
 
