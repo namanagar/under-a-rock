@@ -1,15 +1,15 @@
 
-<h1 align="center">
+<h1 align="center" style="color: #2c3e50">
   <br>
   <a href="http://underarock.net"><img src="https://raw.githubusercontent.com/namanagar/under-a-rock/master/src/assets/logo.png" alt="Under a Rock." width="200"></a>
   <br>
-  under a rock.
+  under a rock<span style="font-size: 2em; color: #4CB191">.</span>
   <br>
 </h1>
 
 <h4 align="center">The fastest way to catch up on the news.</h4>
 
-![screenshot](https://raw.githubusercontent.com/namanagar/under-a-rock/master/working_screnshot.png)
+![screenshot](https://raw.githubusercontent.com/namanagar/under-a-rock/master/working_screenshot.png)
 
 ## Key Features
 
