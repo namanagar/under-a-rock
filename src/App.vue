@@ -231,13 +231,14 @@ export default {
     },
     screenshotDone() {
       console.log("screenshot saved");
+      //TODO: export this png instead of saving to computer somehow
     }
   },
   watch: {
     selected: function(newSelected, oldSelected) {
       if (newSelected != oldSelected) {
         this.clicked = true;
-        document.location = document.location + "#";
+        //document.location = document.location + "#";
         this.getGraphs(this.getHoursFromString(newSelected));
       }
     }
