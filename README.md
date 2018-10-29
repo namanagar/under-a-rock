@@ -26,5 +26,5 @@ Online news media like Twitter or Facebook traditionally present news as a list 
 
 ---
 
-> GitHub [@namanagar](https://github.com/namanagar) &nbsp;&middot;&nbsp;
+> GitHubs [@namanagar](https://github.com/namanagar) and [@lucasfagan](https://github.com/lucasfagan) &nbsp;&middot;&nbsp;
 > LinkedIn [namanagar](https://linkedin.com/in/namanagar)
