@@ -13,14 +13,14 @@
     </div>
     <div class="row no-gutters">
       <div class="ml-auto">
-        <button :disabled="this.pageNumber == 0" type="button" class="btn btn-sm btn-outline-light" @click="pageZero()">first</button>
+        <button :disabled="this.pageNumber == 0" type="button" class="btn btn-sm btn-outline-light" @click="pageZero()">1</button>
       </div>
       <div class="btn-group ml-auto mr-auto" role="group" aria-label="Page navigation">
         <button :disabled="this.pageNumber == 0" type="button" class="btn btn-sm btn-outline-light" @click="prevPage()">🠄</button>
         <button :disabled="this.pageNumber == this.pageCount - 1 || this.pageCount == 0" type="button" class="btn btn-sm btn-outline-light" @click="nextPage()">🠆</button>
       </div>
       <div class="mr-auto">
-        <button :disabled="this.pageNumber == this.pageCount - 1 || this.pageCount == 0" type="button" class="btn btn-sm btn-outline-light" @click="pageLast()">last</button>
+        <button :disabled="this.pageNumber == this.pageCount - 1 || this.pageCount == 0" type="button" class="btn btn-sm btn-outline-light" @click="pageLast()">{{pageCount}}</button>
       </div>
     </div>
   </div>
@@ -63,7 +63,7 @@ export default {
     pageCount(){
       let l = this.articles.length,
           s = this.size;
-      return Math.floor(l/s);
+      return Math.floor(l/s) > 0 ? Math.floor(l/s) : 1;
     },
     paginatedData(){
       const start = this.pageNumber * this.size,

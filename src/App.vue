@@ -144,7 +144,7 @@ export default {
       let edges = this.links;
       edges.forEach(edge => {
         if (
-          (this.selectedNodes.length > 0) &
+          (this.selectedNodes.length > 0) &&
           (this.selectedNodes.map(val => val.id).includes(edge.sid) &&
             this.selectedNodes.map(val => val.id).includes(edge.tid))
         ) {
@@ -212,15 +212,28 @@ export default {
       });
     },
     selectNode(event, node) {
-      this.selectedNodes.includes(node)
-        ? this.selectedNodes.splice(this.selectedNodes.indexOf(node), 1)
-        : this.selectedNodes.push(node);
+      if (this.selectedNodes.includes(node)){
+        this.selectedNodes.splice(this.selectedNodes.indexOf(node), 1);
+      }
+      else {
+        this.selectedNodes.push(node);
+        let selectedEdges = Object.keys(this.selection.links).map(key => this.selection.links[key]);
+        var isLinked = false;
+        selectedEdges.forEach(edge => {
+          if (node == edge.source || node == edge.target){
+            isLinked = true;
+          }
+        })
+        if (!isLinked){
+          this.selectedNodes = [];
+          this.selectedNodes.push(node);
+        }
+      }
     },
     clearNodes() {
       this.selectedNodes = [];
     },
     getHoursFromString(str) {
-      // "2 days" -> 48 or "8 hours" -> 8
       var digit = parseInt(str.match(/\d+/)[0]);
       if (str.indexOf("d") != -1) {
         return digit * 24;
@@ -238,7 +251,6 @@ export default {
     selected: function(newSelected, oldSelected) {
       if (newSelected != oldSelected) {
         this.clicked = true;
-        //document.location = document.location + "#";
         this.getGraphs(this.getHoursFromString(newSelected));
       }
     }
@@ -257,7 +269,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: rgb(225, 225, 231);
+  color: #fff;
   margin-top: 5px;
   margin-bottom: 5vh;
   max-width: 100vw !important;
@@ -313,7 +325,7 @@ a {
 }
 
 .selected {
-  stroke: #caa455 !important;
+  stroke: #e4b95c !important;
   stroke-width: 2.5px;
 }
 
