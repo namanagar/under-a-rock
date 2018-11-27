@@ -41,7 +41,7 @@
     </div>
     <div class="row no-gutters">
       <div class="col-sm-12" v-if="clicked" style="padding-top: 1.5em">
-        <a style="color: #fff!important" href="https://docs.google.com/forms/d/e/1FAIpQLSf5v2MOdiE3bQOUnlxFEOifbqpTXNysteBJTqWyshne6upUvg/viewform"><h2>give us feedback!</h2></a>
+        <a style="color: #fff!important" href="https://goo.go/forms/DXs7agQTxGFf1y593"><h2>give us feedback!</h2></a>
       </div>
     </div>
   </div>
