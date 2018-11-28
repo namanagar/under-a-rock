@@ -40,8 +40,31 @@
       </div>
     </div>
     <div class="row no-gutters">
-      <div class="col-sm-12" v-if="clicked" style="padding-top: 1.5em">
+      <div class="col-sm-12 semipadded" v-if="clicked">
         <a style="color: #fff!important" href="https://goo.gl/forms/DXs7agQTxGFf1y593"><h2>give us feedback!</h2></a>
+      </div>
+    </div>
+    <div class="row no-gutters extrapadded justify-content-md-center">
+      <div class="col-sm-8" v-if="!clicked">
+        <div class="card" style="color: #2c3e50">
+          <div class="card-header">
+            <h2 class="card-title">about us</h2>
+          </div>
+          <div class="card-body">
+            <p style="font-family: Work Sans">
+              <span style="font-family: Lato">under a rock<span style="font-size: 2em; color: #4CB191">.</span></span> is a unique news aggregator, 
+              displaying the world’s top trending news in the form of a web. 
+              the network allows you to see the relationships between articles from around the world, 
+              giving them meaning in a larger context.
+            </p>
+            <p style="margin-top: 1.5em; font-family: Work Sans">
+              just select the time period (in hours or days) you want to catch up on using the slider 
+              and a graph will appear. the bubbles are sized based on how often the topic shows up in the news.
+              clicking bubbles will filter the list of articles on the right (or below, on small screens) to articles
+              about all of the selected bubbles.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -308,6 +331,11 @@ a {
 .semipadded {
   margin-top: 1.5em;
 }
+
+.extrapadded {
+  margin-top: 5em;
+}
+
 .network {
   max-height: 100%;
   min-height: 60vh !important;

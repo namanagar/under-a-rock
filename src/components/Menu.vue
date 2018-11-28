@@ -7,11 +7,6 @@
           <h3>under a rock<span style="font-size: 2em; color: #4CB191">.</span><small style="font-size: 0.45em">(beta)</small></h3>
         </div>
       </div>
-       <div class="row-fluid">
-        <div class="col-sm-12 col-md-12">
-          <small class="no-select" @click="showModal = true">about/how to</small>
-        </div>
-      </div>
       <div class="row-fluid padded">
         <div class="col-sm-12 col-md-12">
           <h4>how long have you been under a rock?</h4>
