@@ -39,6 +39,34 @@
         </div>
       </div>
     </div>
+    <div class="row no-gutters">
+      <div class="col-sm-12 semipadded" v-if="clicked">
+        <a style="color: #fff!important" href="https://goo.gl/forms/DXs7agQTxGFf1y593"><h2>give us feedback!</h2></a>
+      </div>
+    </div>
+    <div class="row no-gutters extrapadded justify-content-md-center">
+      <div class="col-sm-8" v-if="!clicked">
+        <div class="card" style="color: #2c3e50">
+          <div class="card-header">
+            <h2 class="card-title">about us</h2>
+          </div>
+          <div class="card-body">
+            <p style="font-family: Work Sans">
+              <span style="font-family: Lato">under a rock<span style="font-size: 2em; color: #4CB191">.</span></span> is a unique news aggregator, 
+              displaying the world’s top trending news in the form of a web. 
+              the network allows you to see the relationships between articles from around the world, 
+              giving them meaning in a larger context.
+            </p>
+            <p style="margin-top: 1.5em; font-family: Work Sans">
+              just select the time period (in hours or days) you want to catch up on using the slider 
+              and a graph will appear. the bubbles are sized based on how often the topic shows up in the news.
+              clicking bubbles will filter the list of articles on the right (or below, on small screens) to articles
+              about all of the selected bubbles.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -46,8 +74,8 @@
 const axios = require("axios");
 import D3Network from "vue-d3-network";
 import ArticleView from "./components/ArticleView";
-import Menu from "./components/Menu"
-import vueSlider from 'vue-slider-component';
+import Menu from "./components/Menu";
+import vueSlider from "vue-slider-component";
 export default {
   name: "app",
   data() {
@@ -66,56 +94,59 @@ export default {
         linkWidth: 2
       },
       clicked: false,
-      selected: 'slide',
+      selected: "slide",
       styling: {
-        value: 'slide',
+        value: "slide",
         lazy: true,
         tooltip: "false",
         disabled: false,
         piecewise: true,
         piecewiseLabel: true,
         piecewiseStyle: {
-          "backgroundColor": "rgb(225, 225, 231)",
-          "visibility": "visible",
-          "width": "1em",
-          "height": "1em"
+          backgroundColor: "rgb(225, 225, 231)",
+          visibility: "visible",
+          width: "1em",
+          height: "1em"
         },
         piecewiseActiveStyle: {
-          "backgroundColor": "rgb(32, 153, 115)"
+          backgroundColor: "rgb(32, 153, 115)"
         },
         labelActiveStyle: {
-          "color": "rgb(225, 225, 231)",
-          "fontFamily": "Work Sans",
-          "fontSize": "0.85em"
+          color: "rgb(225, 225, 231)",
+          fontFamily: "Work Sans",
+          fontSize: "0.85em"
         },
         labelStyle: {
-          "color": "rgb(225, 225, 231)",
-          "fontFamily": "Work Sans",
-          "fontSize": "0.85em"
+          color: "rgb(225, 225, 231)",
+          fontFamily: "Work Sans",
+          fontSize: "0.85em"
         },
         processStyle: {
-          "backgroundColor": "rgb(32, 153, 115)"
+          backgroundColor: "rgb(32, 153, 115)"
         }
       }
     };
   },
   mounted: function() {
-     axios.get("https://underarock.tk/graphs/options").then(response => {
-        this.options = response.data;
-      });
+    axios.get("https://underarock.tk/graphs/options").then(response => {
+      this.options = response.data;
+    });
   },
   computed: {
     links: function() {
       var links = [];
       this.edges.forEach(el => {
-        let score = el.score
+        let score = el.score;
         links.push({
           id: el.id,
           sid: el.source,
           tid: el.target,
           name: el.id,
           //stroke width not currently working
-          _svgAttrs: { "stroke-width" : el.score.toFixed(2) , 'stroke': "rgba(225, 225, 231, 0.6)"}
+          _svgAttrs: {
+            "stroke-width": el.score.toFixed(2),
+            stroke: "rgba(225, 225, 231, 0.6)"
+          }
         });
       });
       return links;
@@ -123,7 +154,11 @@ export default {
     scaledNodes: function() {
       var myNodes = [];
       this.nodes.forEach(el => {
-        myNodes.push({ id: el.id, name: el.label.toLowerCase(), _size: this.getNodeSize(el.size) });
+        myNodes.push({
+          id: el.id,
+          name: el.label.toLowerCase(),
+          _size: this.getNodeSize(el.size)
+        });
       });
       return myNodes;
     },
@@ -136,7 +171,11 @@ export default {
       });
       let edges = this.links;
       edges.forEach(edge => {
-        if (this.selectedNodes.length > 0 & (this.selectedNodes.map(val => val.id).includes(edge.sid) && this.selectedNodes.map(val => val.id).includes(edge.tid))) {
+        if (
+          (this.selectedNodes.length > 0) &&
+          (this.selectedNodes.map(val => val.id).includes(edge.sid) &&
+            this.selectedNodes.map(val => val.id).includes(edge.tid))
+        ) {
           obj.links[edge.id] = edge;
         }
       });
@@ -158,35 +197,39 @@ export default {
       });
       return filtered;
     },
-    boolSelected: function(){
-      return (this.selectedNodes.length == 0) ? false : true
+    boolSelected: function() {
+      return this.selectedNodes.length == 0 ? false : true;
     },
     optionStrings(options) {
-      var newArr = []
-      newArr.push("slide")
+      var newArr = [];
+      newArr.push("slide");
       this.options.forEach(option => {
-        newArr.push(option < 24
-          ? option + "h"
-          : option / 24 > 1 ? option / 24 + "d" : option / 24 + "d")
+        newArr.push(
+          option == 168 ?
+            option/168 + "w" :
+            option/24 >= 1 ?
+              option/24 + "d" :
+              option + "h"
+        );
       });
       return newArr;
     },
-    sliderWidth(){
-      if (this.clicked){
-        return "80%"
-      }
-      else if (window.innerWidth < 576){
-        return "95%"
-      }
-      else return "60%";
+    sliderWidth() {
+      if (this.clicked) {
+        return "80%";
+      } else if (window.innerWidth < 576) {
+        return "95%";
+      } else return "60%";
     }
   },
   methods: {
-    getNodeSize(size){
-      let newSize = size * 10
-      if (newSize < 15) { return 15 }
-      else if (newSize > 50) {  return 50  }
-      else return newSize
+    getNodeSize(size) {
+      let newSize = size * 10;
+      if (newSize < 15) {
+        return 15;
+      } else if (newSize > 50) {
+        return 50;
+      } else return newSize;
     },
     getGraphs(option) {
       this.selectedNodes = [];
@@ -197,34 +240,46 @@ export default {
       });
     },
     selectNode(event, node) {
-      this.selectedNodes.includes(node)
-        ? this.selectedNodes.splice(this.selectedNodes.indexOf(node), 1)
-        : this.selectedNodes.push(node);
-    },
-    clearNodes(){
-      this.selectedNodes = []
-    },
-    getHoursFromString(str){
-      // "2 days" -> 48 or "8 hours" -> 8
-      var digit = parseInt(str.match(/\d+/)[0])
-      if (str.indexOf("d") != -1){
-        return digit * 24;
+      if (this.selectedNodes.includes(node)){
+        this.selectedNodes.splice(this.selectedNodes.indexOf(node), 1);
       }
-      else return digit;
+      else {
+        this.selectedNodes.push(node);
+        let selectedEdges = Object.keys(this.selection.links).map(key => this.selection.links[key]);
+        var isLinked = false;
+        selectedEdges.forEach(edge => {
+          if (node == edge.source || node == edge.target){
+            isLinked = true;
+          }
+        })
+        if (!isLinked){
+          this.selectedNodes = [];
+          this.selectedNodes.push(node);
+        }
+      }
     },
-    takeScreenshot(){
-      this.$refs.net.screenShot("Under-A-Rock")
+    clearNodes() {
+      this.selectedNodes = [];
     },
-    screenshotDone(){
-      console.log("screenshot saved")
+    getHoursFromString(str) {
+      var digit = parseInt(str.match(/\d+/)[0]);
+      if (str.indexOf("d") != -1) {
+        return digit * 24;
+      } else return digit;
+    },
+    takeScreenshot() {
+      this.$refs.net.screenShot("Under-A-Rock");
+    },
+    screenshotDone() {
+      console.log("screenshot saved");
+      //TODO: export this png instead of saving to computer somehow
     }
   },
   watch: {
-    selected: function(newSelected, oldSelected){
-      if (newSelected != oldSelected){
+    selected: function(newSelected, oldSelected) {
+      if (newSelected != oldSelected) {
         this.clicked = true;
-        document.location = document.location + "#";
-        this.getGraphs(this.getHoursFromString(newSelected))
+        this.getGraphs(this.getHoursFromString(newSelected));
       }
     }
   },
@@ -242,7 +297,7 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: rgb(225, 225, 231);
+  color: #fff;
   margin-top: 5px;
   margin-bottom: 5vh;
   max-width: 100vw !important;
@@ -264,7 +319,7 @@ p,
 a {
   font-family: "Lato", sans-serif;
 }
-.no-select{
+.no-select {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -273,10 +328,15 @@ a {
 .padded {
   margin-top: 2em;
 }
-.semipadded{
+.semipadded {
   margin-top: 1.5em;
 }
-.network{
+
+.extrapadded {
+  margin-top: 5em;
+}
+
+.network {
   max-height: 100%;
   min-height: 60vh !important;
   max-width: 97.5% !important;
@@ -292,13 +352,13 @@ a {
 }
 
 .node {
-  fill: rgb(32, 153, 115) ; 
+  fill: rgb(32, 153, 115);
   stroke: rgba(225, 225, 231, 0.7);
   stroke-width: 1.5px;
 }
 
 .selected {
-  stroke: #caa455 !important;
+  stroke: #e4b95c !important;
   stroke-width: 2.5px;
 }
 
@@ -307,19 +367,19 @@ a {
   stroke-width: 4px;
 }
 
-#slider{
+#slider {
   margin-left: 5em;
 }
 
-.badge{
+.badge {
   font-family: "Work Sans";
   margin-left: 0.5em;
 }
 
 @media screen and (max-width: 576px) {
-    #slider{
-      margin-left: 2.25em;
-      max-width: 95% !important;
-    }
-  } 
+  #slider {
+    margin-left: 2.25em;
+    max-width: 95% !important;
+  }
+}
 </style>
