@@ -59,9 +59,8 @@
             </p>
             <p style="margin-top: 1.5em; font-family: Work Sans">
               just select the time period (in hours or days) you want to catch up on using the slider 
-              and a graph will appear. the bubbles are sized based on how often the topic shows up in the news.
-              clicking bubbles will filter the list of articles on the right (or below, on small screens) to articles
-              about all of the selected bubbles.
+              and a graph will appear. the bubbles' size depends on how often the topic shows up in the news.
+              clicking bubbles will filter the list of articles to give you the news you care about.
             </p>
           </div>
         </div>
