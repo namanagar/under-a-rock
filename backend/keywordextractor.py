@@ -6,8 +6,15 @@ from nltk.chunk import tree2conlltags
 class KeywordExtractor:
 
 	def __init__(self, text):
+		# for word in text.split(' ')[:15]:
+		# 	if word[0] != word[0].lower() and word[1:] != word[1:].lower():
+		# 		i=1
+		# 		while i<len(word):
+		# 			if word[i]!=word[i].lower():
+		# 				if word[:i] in text.split(' ')[:15]:
+		# 					text = 
 		if text is not None and len(text)>3:
-			self.keyphrase_scores = self.wikipediaNormalizeScore(self.removeSubsets(self.extractKeywords(text[:400])))
+			self.keyphrase_scores = self.wikipediaNormalizeScore(self.removeSubsets(self.extractKeywords(text.split('(Reuters) - ')[-1][:400])))
 
 	def extractKeywords(self, text):
 		keywords = []
@@ -30,7 +37,7 @@ class KeywordExtractor:
 		now = pendulum.now('UTC')
 		for phrase in keyphrases:
 			if wikipedia.search(phrase):
-				title = wikipedia.search(phrase)[0]
+				title = wikipedia.search(phrase)[0] if wikipedia.search(phrase)[0][:7] != 'List of' else wikipedia.search(phrase)[1]
 				resp = requests.get('http://en.wikipedia.org/w/api.php',params = {'action':'query', 'prop':'revisions','rvprop':'timestamp','rvlimit':10, 'format':'json','titles':title})
 				if resp.status_code == 200:
 					for d in list(json.loads(json.dumps(resp.json()))['query']['pages'].values()):

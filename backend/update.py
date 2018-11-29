@@ -11,9 +11,9 @@ from alpha_vantage.timeseries import TimeSeries
 from alpha_vantage.cryptocurrencies import CryptoCurrencies
 
 
-accounts=["cnnbrk","AP_Politics","BBCBreaking","Reuters","BreakingNews","AP","foxnewspolitics","AFP","thehill","politico","USATODAY","axios","washingtonpost","NPR"]
-account_names = {"cnnbrk":"CNN","AP_Politics":"AP","BBCBreaking":"BBC","Reuters":"Reuters","AP":"AP","BreakingNews":"NBC","foxnewspolitics":"Fox News","AFP":"AFP","thehill":"The Hill","politico":"Politico","USATODAY":"USA Today","axios":"Axios","washingtonpost":"The Washington Post","NPR":"NPR"}
-flaggedPhrases = ["reuters",'ap','usa today']
+accounts=["cnnbrk","AP_Politics","BBCBreaking","Reuters","BreakingNews","AP","foxnewspolitics","AFP","thehill","politico","USATODAY","axios","washingtonpost","NPR","nytpolitics"]
+account_names = {"cnnbrk":"CNN","AP_Politics":"AP","BBCBreaking":"BBC","Reuters":"Reuters","AP":"AP","BreakingNews":"NBC","foxnewspolitics":"Fox News","AFP":"AFP","thehill":"The Hill","politico":"Politico","USATODAY":"USA Today","axios":"Axios","washingtonpost":"The Washington Post","NPR":"NPR","nytpolitics":"The New York Times"}
+flaggedPhrases = ["reuters",'ap','usa today','united states']
 
 
 f = open('other/credentials.txt')
@@ -22,8 +22,6 @@ f.close()
 auth = tweepy.OAuthHandler(credentials["tweepyauth1"],credentials["tweepyauth2"])
 auth.set_access_token(credentials["tweepyaccess1"], credentials["tweepyaccess2"])
 
-auth=tweepy.OAuthHandler("LYuZ8TRRBuJ7IQcoyyZYwe0uy","eIwCZsZ4IOQqe8p3nI4ybAJHcShILcpmwYkzLXW5xLSTplzDRl")
-auth.set_access_token("928145131886317568-6bAb5L7Xj9OfiPYfgGTfMrYG6kCdZjC", "iRivk0tnYtPHaTLlwNipd6pECm7RcOHrNp0hPVvqx8AWb")
 api = tweepy.API(auth)
 conn = psycopg2.connect(dbname = credentials["dbname"],
                         user = credentials["user"],
@@ -47,7 +45,7 @@ def updateTweetsInDatabase():
     #get the keywords to insert into DB
     kwdDict = {}
     print('Extracting keywords...')
-    for url,name,timestamp,tweet_text in tqdm(data):
+    for url,name,timestamp,tweet_text,tweet_id in tqdm(data):
         title, text = getArticleTitleText(url)
 
         #make sure article could be found
@@ -68,6 +66,7 @@ def updateTweetsInDatabase():
                     print("Article already exists in db: ",title)
                 else:
                     cur.execute('''INSERT INTO public.articles VALUES (%s,%s,%s,%s,%s,%s)''', (url,keyphrases,title,name,lede,timestamp))
+                    #api.update_status(f'@{name} Tired of reading the news? Visualize it at underarock.net',tweet_id)
     print(f'Waiting to insert {len(data)} tweets into database')
     return
 
@@ -103,11 +102,12 @@ def dataToDateDict(data):
     for item in data:
         tweetjson=json.loads(json.dumps(item._json))
         tweeted_datetime_utc=pendulum.parse(tweetjson["created_at"], strict=False)
+        tweet_id = tweetjson['id']
         tweet_text = tweetjson["full_text"]
         name = tweetjson["user"]["screen_name"]
         urls = tweetjson['entities']['urls']
         if len(urls)>0 and len(urls[0]['url'])>0:
-            dateDict[tweeted_datetime_utc.timestamp()] = (urls[0]['url'],name,tweeted_datetime_utc.timestamp(),tweet_text)
+            dateDict[tweeted_datetime_utc.timestamp()] = (urls[0]['url'],name,tweeted_datetime_utc.timestamp(),tweet_text,tweet_id)
     return dateDict
 
 def removeExcessTweets(dateDict,lastTimestamp):
