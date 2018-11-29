@@ -9,6 +9,8 @@ from newspaper import Article
 from newspaper.article import ArticleException
 from alpha_vantage.timeseries import TimeSeries
 from alpha_vantage.cryptocurrencies import CryptoCurrencies
+from bs4 import BeautifulSoup
+
 
 
 accounts=["cnnbrk","AP_Politics","BBCBreaking","Reuters","BreakingNews","AP","foxnewspolitics","AFP","thehill","politico","USATODAY","axios","washingtonpost","NPR","nytpolitics"]
@@ -46,7 +48,7 @@ def updateTweetsInDatabase():
     kwdDict = {}
     print('Extracting keywords...')
     for url,name,timestamp,tweet_text,tweet_id in tqdm(data):
-        title, text = getArticleTitleText(url)
+        title, text = getArticleTitleText(url,name)
 
         #make sure article could be found
         if title!='error':
@@ -190,15 +192,41 @@ def cleanURLs(urls, kwd_final):
         filtered_urls.append(d)
     return filtered_urls
 
-def getArticleTitleText(url):
-    try:
-        article = Article(url)
-        article.download()
-        article.parse()
-        return (article.title, article.text)
-    except ArticleException:
-        print("URL failed:",url)
-        return ('error','error')
+def getArticleTitleText(url,name):
+    if name.lower()!='thehill':
+        try:
+            article = Article(url)
+            article.download()
+            article.parse()
+            return (article.title, article.text)
+        except ArticleException:
+            print("URL failed:",url)
+            return ('error','error')
+    else:
+        page = requests.get(url)
+        soup = BeautifulSoup(page.text, 'html.parser')
+        final = ''
+        p = soup.find_all("p")[:-3]
+        for pa in p:
+            j = pa.findAll('a', {'class':'people-articles'})
+            for child in list(j):
+                child.decompose()
+            j = pa.findAll('a', {'class':'more'})
+            for child in list(j):
+                child.decompose()
+            j = pa.findAll('a', {'class':'name'})
+            for child in list(j):
+                child.decompose()
+            final+= pa.get_text().replace('   ','')
+
+        try:
+            article = Article(url)
+            article.download()
+            article.parse()
+            return (article.title, final)
+        except ArticleException:
+            print("URL failed:",url)
+            return ('error','error')
 
 def main():
     updateTweetsInDatabase()

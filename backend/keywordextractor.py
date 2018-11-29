@@ -37,7 +37,10 @@ class KeywordExtractor:
 		now = pendulum.now('UTC')
 		for phrase in keyphrases:
 			if wikipedia.search(phrase):
-				title = wikipedia.search(phrase)[0] if wikipedia.search(phrase)[0][:7] != 'List of' else wikipedia.search(phrase)[1]
+				try:
+					title = wikipedia.search(phrase)[0] if wikipedia.search(phrase)[0][:7] != 'List of' else wikipedia.search(phrase)[1]
+				except:
+					title = wikipedia.search(phrase)[0]
 				resp = requests.get('http://en.wikipedia.org/w/api.php',params = {'action':'query', 'prop':'revisions','rvprop':'timestamp','rvlimit':10, 'format':'json','titles':title})
 				if resp.status_code == 200:
 					for d in list(json.loads(json.dumps(resp.json()))['query']['pages'].values()):
