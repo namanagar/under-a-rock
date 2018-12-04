@@ -46,21 +46,20 @@
     </div>
     <div class="row no-gutters extrapadded justify-content-md-center">
       <div class="col-sm-8" v-if="!clicked">
-        <div class="card" style="color: #2c3e50">
-          <div class="card-header">
-            <h2 class="card-title">about us</h2>
-          </div>
+        <div>
           <div class="card-body">
+            <h2 class="card-title">what do i do?</h2>
+             <p style="font-family: Work Sans">
+              just select the time period (in hours or days) you want to catch up on using the slider 
+              and a graph will appear. the bubbles' size depends on how often the topic shows up in the news.
+              clicking bubbles will filter the list of articles to give you the news you care about.
+            </p>
+            <h2 style="margin-top: 1em;" class="card-title">about us</h2>
             <p style="font-family: Work Sans">
               <span style="font-family: Lato">under a rock<span style="font-size: 2em; color: #4CB191">.</span></span> is a unique news aggregator, 
               displaying the world’s top trending news in the form of a web. 
               the network allows you to see the relationships between articles from around the world, 
               giving them meaning in a larger context.
-            </p>
-            <p style="margin-top: 1.5em; font-family: Work Sans">
-              just select the time period (in hours or days) you want to catch up on using the slider 
-              and a graph will appear. the bubbles' size depends on how often the topic shows up in the news.
-              clicking bubbles will filter the list of articles to give you the news you care about.
             </p>
           </div>
         </div>
