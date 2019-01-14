@@ -261,7 +261,10 @@ export default {
     },
     getHoursFromString(str) {
       var digit = parseInt(str.match(/\d+/)[0]);
-      if (str.indexOf("d") != -1) {
+      if (str.indexOf("w") != -1){
+        return digit * 24 * 7;
+      }
+      else if (str.indexOf("d") != -1) {
         return digit * 24;
       } else return digit;
     },
