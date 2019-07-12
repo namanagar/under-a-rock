@@ -16,8 +16,8 @@
         <button :disabled="this.pageNumber == 0" type="button" class="btn btn-sm btn-outline-light" @click="pageZero()">1</button>
       </div>
       <div class="btn-group ml-auto mr-auto" role="group" aria-label="Page navigation">
-        <button :disabled="this.pageNumber == 0" type="button" class="btn btn-sm btn-outline-light" @click="prevPage()">🠄</button>
-        <button :disabled="this.pageNumber == this.pageCount - 1 || this.pageCount == 0" type="button" class="btn btn-sm btn-outline-light" @click="nextPage()">🠆</button>
+        <button :disabled="this.pageNumber == 0" type="button" class="btn btn-sm btn-outline-light" @click="prevPage()">←</button>
+        <button :disabled="this.pageNumber == this.pageCount - 1 || this.pageCount == 0" type="button" class="btn btn-sm btn-outline-light" @click="nextPage()">→</button>
       </div>
       <div class="mr-auto">
         <button :disabled="this.pageNumber == this.pageCount - 1 || this.pageCount == 0" type="button" class="btn btn-sm btn-outline-light" @click="pageLast()">{{pageCount}}</button>
