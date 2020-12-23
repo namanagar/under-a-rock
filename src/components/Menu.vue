@@ -16,10 +16,7 @@
   <div v-if="this.clicked === true" id="post-click">
     <nav class="navbar">
       <div class="navbar-brand">
-        <img id="logoClicked" src="../assets/logo.png" alt="Logo">
-      </div>
-      <div class="no-select">
-        <h4>this is just a frontend demo, the server got expensive 😥</h4>
+        <img id="logoClicked" src="../assets/logo.png" alt="Logo" @click='goHome'>
       </div>
       <div>
         <h5 class="no-select" @click="showModal = true">about under a rock</h5>
@@ -40,6 +37,9 @@ export default {
     };
   },
   methods: {
+    goHome() {
+      this.$router.push({ path: '/'});
+    }
   },
   components: {
     AboutModal

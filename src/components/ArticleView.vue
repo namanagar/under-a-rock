@@ -23,6 +23,11 @@
         <button :disabled="this.pageNumber == this.pageCount - 1 || this.pageCount == 0" type="button" class="btn btn-sm btn-outline-light" @click="pageLast()">{{pageCount}}</button>
       </div>
     </div>
+    <div class="row no-gutters">
+      <div class="ml-auto mr-auto">
+        <small class="text-center">this is just a frontend demo, the server got expensive 😥</small>
+      </div>
+    </div>
   </div>
 </template>
 
