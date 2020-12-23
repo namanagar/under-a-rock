@@ -75,9 +75,10 @@ export default {
     };
   },
   mounted: function() {
-    axios.get("https://underarock.tk/graphs/options").then(response => {
+    /* axios.get("https://underarock.tk/graphs/options").then(response => {
       this.options = response.data;
-    });
+    }); */
+    this.options = [3,6,12,24,48,168];
   },
   computed: {
     optionStrings(options) {
@@ -103,7 +104,7 @@ export default {
   methods: {
     getGraphs(option) {
       let allOptions = this.options;
-      console.log(allOptions)
+      // console.log(allOptions)
       this.$router.push({ path: '/graphs/' + option, params: { 'time': option }});
     },
     getHoursFromString(str) {

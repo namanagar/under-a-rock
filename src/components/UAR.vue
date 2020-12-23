@@ -42,6 +42,7 @@
 
 <script>
 const axios = require("axios");
+import data from './graphs.js';
 import D3Network from "vue-d3-network";
 import ArticleView from "./ArticleView";
 import Menu from "./Menu";
@@ -98,9 +99,11 @@ export default {
     };
   },
   mounted: function() {
-    axios.get("https://underarock.tk/graphs/options").then(response => {
+    /* axios.get("https://underarock.tk/graphs/options").then(response => {
       this.options = response.data;
     });
+    */
+    this.options = [3,6,12,24,48,168];
     this.getGraphs(this.$route.params.time);
   },
   computed: {
@@ -201,11 +204,16 @@ export default {
     },
     getGraphs(option) {
       this.selectedNodes = [];
-      axios.get("https://underarock.tk/graphs/" + option).then(response => {
+      let result = data.filter(obj => { return obj.timecovered == 3600*option });
+      this.nodes = result[0].json.nodes;
+      this.edges = result[0].json.edges;
+      this.articles = result[0].json.articles;
+      /*axios.get("https://underarock.tk/graphs/" + option).then(response => {
         this.nodes = response.data.nodes;
         this.edges = response.data.edges;
         this.articles = response.data.articles;
-      });
+      }); */
+
     },
     selectNode(event, node) {
       if (this.selectedNodes.includes(node)){

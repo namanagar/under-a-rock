@@ -18,6 +18,9 @@
       <div class="navbar-brand">
         <img id="logoClicked" src="../assets/logo.png" alt="Logo">
       </div>
+      <div class="no-select">
+        <h4>this is just a frontend demo, the server got expensive 😥</h4>
+      </div>
       <div>
         <h5 class="no-select" @click="showModal = true">about under a rock</h5>
       </div>
