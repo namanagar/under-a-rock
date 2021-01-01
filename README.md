@@ -23,8 +23,3 @@ Online news media like Twitter or Facebook traditionally present news as a list 
   - No more scrolling through dozens of headlines to find what you're interested in - just click on topics you want to read about to filter the article list. 
 * Algorithm generated, no hand curation.
   - Traditional email newsletters like the NYTimes' First Draft are inherently biased by their hand-curated nature. We just show you what's being written about the most.
-
----
-
-> GitHubs [@namanagar](https://github.com/namanagar) and [@lucasfagan](https://github.com/lucasfagan) &nbsp;&middot;&nbsp;
-> LinkedIn [namanagar](https://linkedin.com/in/namanagar)
